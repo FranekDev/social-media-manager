@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using KanriSocial.Domain.Dtos.Instagram;
+using KanriSocial.Shared.Dtos.Instagram;
 
 namespace KanriSocial.Infrastructure.Clients.Interfaces;
 
@@ -20,7 +21,7 @@ public interface IInstagramClient
     /// <param name="caption">Post caption</param>
     /// <param name="accessToken">User's access token</param>
     /// <returns>The task result contains the Instagram media container which contains container Id</returns>
-    Task<Result<InstagramMediaContainer>> GetMedia(string instagramUserId, string imageUrl, string? caption, string accessToken);
+    Task<Result<InstagramContainer?>> GetMedia(string instagramUserId, string imageUrl, string? caption, string accessToken);
 
     /// <summary>
     /// Publish media to the user's Instagram account.
@@ -29,5 +30,21 @@ public interface IInstagramClient
     /// <param name="container">Container with post Id to be published</param>
     /// <param name="accessToken">User's access token</param>
     /// <returns>The task result indicates whether the operation was successful.</returns>
-    Task<Result> PublishMedia(string instagramUserId, InstagramMediaContainer container, string accessToken);
+    Task<Result<InstagramMedia?>> PublishMedia(string instagramUserId, InstagramContainer container, string accessToken);
+    
+    /// <summary>
+    /// Get user details from Instagram.
+    /// </summary>
+    /// <param name="instagramUserId">Instagram user's Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <returns>The task result contains the Instagram User Detail object</returns>
+    Task<Result<InstagramUserDetail?>> GetUserDetail(string instagramUserId,string accessToken);
+    
+    /// <summary>
+    /// Get media details from Instagram.
+    /// </summary>
+    /// <param name="instagramMediaId">Instagram media Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <returns>The task result contains the Instagram Media object</returns>
+    Task<Result<InstagramMediaDetail?>> GetMediaDetail(string instagramMediaId, string accessToken);
 }

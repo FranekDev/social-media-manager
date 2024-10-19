@@ -1,18 +1,17 @@
 ﻿using FluentResults;
 using KanriSocial.Domain.Dtos.Instagram;
 using KanriSocial.Infrastructure.Clients.Interfaces;
-using Microsoft.AspNetCore.WebUtilities;
+using KanriSocial.Shared.Dtos.Instagram;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace KanriSocial.Infrastructure.Clients;
 
-public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguration configuration) : IInstagramClient
+public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguration configuration) 
+    : BaseHttpClient(httpClientFactory, nameof(InstagramClient)), IInstagramClient
 {
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient(nameof(InstagramClient));
     private readonly IConfiguration _configuration = configuration;
-    // private string _accessToken = string.Empty;
-
+    
     public async Task<Result<InstagramTokenResponse?>> GetLongLivedToken(string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
@@ -24,20 +23,10 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         };
 
         var uri = BuildUri("oauth/access_token", queryParams);
-        var response = await _httpClient.GetAsync(uri);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return Result.Fail("Failed to get long-lived token");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-        var tokenResponse = JsonConvert.DeserializeObject<InstagramTokenResponse>(content);
-
-        return Result.Ok(tokenResponse);
+        return await GetFromApiWithFailMessage<InstagramTokenResponse>(uri, "Failed to get long-lived token");
     }
 
-    public async Task<Result<InstagramMediaContainer>> GetMedia(string instagramUserId, string imageUrl, string? caption, string accessToken)
+    public async Task<Result<InstagramContainer?>> GetMedia(string instagramUserId, string imageUrl, string? caption, string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
         {
@@ -47,20 +36,10 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         };
 
         var uri = BuildUri($"{instagramUserId}/media", queryParams);
-        var response = await _httpClient.PostAsync(uri, null);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return Result.Fail("Failed to get media");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-        var mediaContainer = JsonConvert.DeserializeObject<InstagramMediaContainer>(content);
-
-        return Result.Ok(mediaContainer);
+        return await PostToApiWithFailMessage<InstagramContainer>(uri, null, "Failed to get media");
     }
 
-    public async Task<Result> PublishMedia(string instagramUserId, InstagramMediaContainer container, string accessToken)
+    public async Task<Result<InstagramMedia?>> PublishMedia(string instagramUserId, InstagramContainer container, string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
         {
@@ -69,35 +48,50 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         };
 
         var uri = BuildUri($"{instagramUserId}/media_publish", queryParams);
-        var response = await _httpClient.PostAsync(uri, null);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return Result.Fail("Failed to publish media");
-        }
-
-        return Result.Ok();
+        return await PostToApiWithFailMessage<InstagramMedia>(uri, null, "Failed to publish media");
     }
 
-    private string BuildUri(string path, IDictionary<string, string?> queryParams)
+    public async Task<Result<InstagramUserDetail?>> GetUserDetail(string instagramUserId, string accessToken)
     {
-        var basePath = _httpClient.BaseAddress?.AbsolutePath.TrimEnd('/') ?? string.Empty;
-        var fullPath = $"{basePath}/{path.TrimStart('/')}";
-
-        var uriBuilder = new UriBuilder(_httpClient.BaseAddress)
+        List<string> fields = ["username", "biography", "media_count", "followers_count", "follows_count", "name", "profile_picture_url", "website"];
+        
+        var queryParams = new Dictionary<string, string?>
         {
-            Path = fullPath
+            ["fields"] = string.Join(",", fields),
+            ["access_token"] = accessToken
         };
-
-        var query = QueryHelpers.AddQueryString(string.Empty, queryParams);
-        uriBuilder.Query = query.TrimStart('?');
-
-        return uriBuilder.Uri.ToString();
+        
+        var uri = BuildUri(instagramUserId, queryParams);
+        return await GetFromApiWithFailMessage<InstagramUserDetail>(uri, "Failed to get user details");
     }
-
-    // public void SetAccessToken(string accessToken)
-    // {
-    //     _accessToken = accessToken;
-    // }
-
+    
+    public async Task<Result<InstagramMediaDetail?>> GetMediaDetail(string instagramMediaId, string accessToken)
+    {
+        List<string> fields = [
+            "caption", 
+            "comments_count", 
+            "copyright_check_information", 
+            "id", 
+            "is_comment_enabled", 
+            "is_shared_to_feed", 
+            "like_count", 
+            "media_product_type", 
+            "media_type", 
+            "media_url", 
+            "owner", 
+            "permalink", 
+            "shortcode", 
+            "thumbnail_url", 
+            "timestamp", 
+            "username"];
+        // check required permissions
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["fields"] = string.Join(",", fields),
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri(instagramMediaId, queryParams);
+        return await GetFromApiWithFailMessage<InstagramMediaDetail>(uri, "Failed to get media detail");
+    }
 }
