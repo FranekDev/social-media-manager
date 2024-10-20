@@ -1,4 +1,4 @@
-﻿namespace KanriSocial.Application.Features.Instagram.Post.Commands;
+﻿namespace KanriSocial.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
 
 public record CreateInstagramPostRequest
 {

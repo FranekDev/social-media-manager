@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using FluentResults;
-using KanriSocial.Application.Features.Instagram.Post.Commands;
+using KanriSocial.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
 using KanriSocial.Application.Features.Instagram.Post.Queries.GetInstagramUserPosts;
 using KanriSocial.Application.Features.Instagram.Post.Queries.GetUnpublishedPosts;
 using KanriSocial.Domain.Dtos.Instagram;

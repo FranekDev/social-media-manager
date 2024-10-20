@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace KanriSocial.Application.Features.Instagram.Post.Commands;
+namespace KanriSocial.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
 
 public sealed class CreateInstagramPostCommandValidator : AbstractValidator<CreateInstagramPostCommand>
 {

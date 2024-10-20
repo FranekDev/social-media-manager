@@ -1,11 +1,10 @@
 ﻿using FluentResults;
 using KanriSocial.Application.Services.Instagram.Interfaces;
 using KanriSocial.Domain.Dtos.Instagram;
-using KanriSocial.Domain.Models.Instagram.Post;
 using KanriSocial.Infrastructure.Repositories.Instagram.Interfaces.User;
 using MediatR;
 
-namespace KanriSocial.Application.Features.Instagram.Post.Commands;
+namespace KanriSocial.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
 
 public class CreateInstagramPostCommandHandler(
     IInstagramPostService instagramPostService,
