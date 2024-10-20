@@ -9,8 +9,8 @@ public sealed class CreateInstagramPostCommandValidator : AbstractValidator<Crea
         RuleFor(x => x.Caption)
             .MaximumLength(2200).WithMessage("Caption must not exceed 2200 characters");
 
-        RuleFor(x => x.ImageUrl)
-            .NotEmpty().WithMessage("ImageUrl is required");
+        RuleFor(x => x.ImageBytes)
+            .NotEmpty().WithMessage("Image is required");
 
         RuleFor(x => x.ScheduledAt)
             .NotEmpty().WithMessage("ScheduledAt is required")

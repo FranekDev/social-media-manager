@@ -27,7 +27,7 @@ public class InstagramPostController(ISender sender) : ControllerBase
             return BadRequest("Invalid user id");
         }
         
-        var result = await _sender.Send(new CreateInstagramPostCommand(request.ImageUrl, request.Caption, request.ScheduledAt, userIdGuid));
+        var result = await _sender.Send(new CreateInstagramPostCommand(request.ImageBytes, request.Caption, request.ScheduledAt, userIdGuid));
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);

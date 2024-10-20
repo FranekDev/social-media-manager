@@ -96,7 +96,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -107,6 +107,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 app.UseMiddleware<TokenMiddleware>();
 
 app.UseAuthentication();

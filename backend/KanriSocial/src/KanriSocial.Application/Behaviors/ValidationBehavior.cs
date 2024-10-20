@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using FluentResults;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 
@@ -9,7 +7,6 @@ namespace KanriSocial.Application.Behaviors;
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : Result
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators = validators;
     public async Task<TResponse> Handle(
