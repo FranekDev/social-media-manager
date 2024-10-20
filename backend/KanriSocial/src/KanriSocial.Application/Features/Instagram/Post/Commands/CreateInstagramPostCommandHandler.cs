@@ -16,11 +16,13 @@ public class CreateInstagramPostCommandHandler(
     
     public async Task<Result<Guid>> Handle(CreateInstagramPostCommand request, CancellationToken cancellationToken)
     {
-        // var instagramUser = await _instagramUserRepository.GetByUserId(request.UserId);
-
         var post = new InstagramPostDto(Guid.NewGuid(), request.ImageUrl, request.Caption, request.ScheduledAt, request.UserId, false);
-        
-        return await _instagramPostService.SchedulePost(post);
+
+        var instagramUser = await _instagramUserRepository.GetByUserId(post.UserId);
+        // upload photo to azure
+        // uppload photo to db with image link
+        // schedule post
+        return await _instagramPostService.SchedulePost(post, instagramUser);
     }
 }
 

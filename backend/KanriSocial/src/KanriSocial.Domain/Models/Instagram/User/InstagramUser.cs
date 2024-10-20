@@ -10,9 +10,9 @@ public class InstagramUser
     public string AccountId { get; init; }
     public string UserId { get; init; }
     public Models.User User { get; init; }
-    public string Token { get; init; }
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; init; } = DateTime.UtcNow;
+    public string Token { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public ICollection<InstagramPost> InstagramPosts { get; init; } = new List<InstagramPost>();
 }

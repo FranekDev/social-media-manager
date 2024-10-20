@@ -15,24 +15,20 @@ public class InstagramUserRepository(KanriSocialDbContext context) : IInstagramU
         await _context.SaveChangesAsync();
         
         return instagramUser.Entity.Id;
-        // return Guid.NewGuid();
     }
  
     public async Task<IEnumerable<InstagramUser>> GetAll()
     {
         return await _context.InstagramUsers.ToListAsync();
-        // return [];
     }
     
     public async Task<InstagramUser?> GetByUserId(Guid userId)
     {
         return await _context.InstagramUsers.FirstOrDefaultAsync(x => x.UserId == userId.ToString());
-        // return null;
     }
     
     public async Task<InstagramUser?> GetByInstagramUserId(Guid instagramUserId)
     {
         return await _context.InstagramUsers.FirstOrDefaultAsync(x => x.Id == instagramUserId);
-        // return null;
     }
 }

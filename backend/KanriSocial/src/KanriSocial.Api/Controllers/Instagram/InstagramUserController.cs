@@ -1,6 +1,9 @@
 ﻿using System.Security.Claims;
+using FluentResults;
 using KanriSocial.Application.Features.Instagram.User.Commands;
 using KanriSocial.Application.Features.Instagram.User.Commands.CreateInstagramUser;
+using KanriSocial.Application.Features.Instagram.User.Queries.GetInstagramUser;
+using KanriSocial.Shared.Dtos.Instagram;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,5 +29,18 @@ public class InstagramUserController(ISender sender) : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
         }
+    }
+
+    [HttpGet("{userId:Guid}")]
+    public async Task<ActionResult<Result<InstagramUserDetail>>> GetInstagramUserById([FromRoute] Guid userId)
+    {
+        var result = await _sender.Send(new GetInstagramUserByUserIdQuery(userId));
+        
+        if (result.IsFailed)
+        {
+            return NotFound(result.Errors);
+        }
+        
+        return Ok(result.Value);
     }
 }

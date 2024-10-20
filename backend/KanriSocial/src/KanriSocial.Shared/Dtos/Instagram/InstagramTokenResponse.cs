@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace KanriSocial.Domain.Dtos.Instagram;
+namespace KanriSocial.Shared.Dtos.Instagram;
 
 public record InstagramTokenResponse
 {

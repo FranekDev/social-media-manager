@@ -3,6 +3,7 @@ using KanriSocial.Infrastructure.Clients;
 using KanriSocial.Infrastructure.Clients.Builders;
 using KanriSocial.Infrastructure.Clients.Interfaces;
 using KanriSocial.Infrastructure.Database;
+using KanriSocial.Infrastructure.Repositories;
 using KanriSocial.Infrastructure.Repositories.Instagram;
 using KanriSocial.Infrastructure.Repositories.Instagram.Interfaces;
 using KanriSocial.Infrastructure.Repositories.Instagram.Interfaces.User;
@@ -32,6 +33,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IInstagramUserRepository, InstagramUserRepository>();
         services.AddScoped<IInstagramPostRepository, InstagramPostRepository>();
+        services.AddScoped<UserTokenRepository>();
         
         return services;
     }

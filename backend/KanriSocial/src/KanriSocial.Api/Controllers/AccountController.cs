@@ -1,7 +1,10 @@
-﻿using KanriSocial.Application.Services.Interfaces;
+﻿using System.Security.Claims;
+using KanriSocial.Application.Services.Interfaces;
 using KanriSocial.Domain.Dtos.Account;
 using KanriSocial.Domain.Models;
 using KanriSocial.Infrastructure.Database;
+using KanriSocial.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +17,13 @@ namespace KanriSocial.Api.Controllers;
 public class AccountController(
     UserManager<User> userManager, 
     ITokenService tokenService, 
-    SignInManager<User> signInManager) : ControllerBase
+    SignInManager<User> signInManager,
+    UserTokenRepository userTokenRepository) : ControllerBase
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly ITokenService _tokenService = tokenService;
     private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly UserTokenRepository _userTokenRepository = userTokenRepository;
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
@@ -43,14 +48,27 @@ public class AccountController(
             {
                 return Unauthorized("Invalid username or password!");
             }
+            var existingToken = await _userTokenRepository.GetByUserId(user.Id);
+            string token;
+            if (existingToken != null)
+            {
+                await _userTokenRepository.Delete(user.Id);
+                token = await _tokenService.CreateToken(user);
+            }
+            else
+            {
+                token = existingToken.Token;
+            }
             
-            return Ok(
-                new NewUserDto
-                {
-                    Username = user.UserName,
-                    Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
-                });
+            // var token = await _tokenService.CreateToken(user);
+            var newUserDto = new NewUserDto
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = token
+            };
+            
+            return Ok(newUserDto);
         }
         catch (Exception e)
         {
@@ -88,14 +106,52 @@ public class AccountController(
                 return BadRequest(roleResult.Errors);
             }
             
-            return Ok(
-                new NewUserDto
-                {
-                    Username = user.UserName,
-                    Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
-                });
+            var token = await _tokenService.CreateToken(user);
+            var newUserDto = new NewUserDto
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = token
+            };
             
+            return Ok(newUserDto);
+            
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            if (userId == null)
+            {
+                return BadRequest("User not found");
+            }
+            
+            var userToken = await _userTokenRepository.GetByUserId(userId);
+            
+            if (userToken == null)
+            {
+                return BadRequest("User token not found");
+            }
+            
+            if (userToken.UserId != userId)
+            {
+                return Unauthorized("Invalid user token");
+            }
+
+            userToken.IsValid = false;
+            await _userTokenRepository.Update(userToken);
+            
+            return Ok("User logged out successfully");
         }
         catch (Exception e)
         {

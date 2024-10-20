@@ -7,6 +7,7 @@ using KanriSocial.Domain.Models.Instagram.User;
 using KanriSocial.Infrastructure.Clients.Interfaces;
 using KanriSocial.Infrastructure.Repositories.Instagram.Interfaces;
 using KanriSocial.Infrastructure.Repositories.Instagram.Interfaces.User;
+using KanriSocial.Shared.Dtos.Instagram;
 
 namespace KanriSocial.Application.Services.Instagram;
 
@@ -19,23 +20,18 @@ public class InstagramPostService(
     private readonly IInstagramUserRepository _instagramUserRepository = instagramUserRepository;
     private readonly IInstagramPostRepository _instagramPostRepository = instagramPostRepository;
 
-    public async Task<Result<Guid>> SchedulePost(InstagramPostDto post)
+    public async Task<Result<Guid>> SchedulePost(InstagramPostDto post, InstagramUser instagramUser)
     {
-        var instagramUser = await _instagramUserRepository.GetByUserId(post.UserId);
-        if (instagramUser is null)
-        {
-            return Result.Fail("Instagram user not found");
-        }
-        
         var mediaResult = await _instagramClient.GetMedia(instagramUser.AccountId, post.ImageUrl, post?.Caption, instagramUser.Token);
         if (mediaResult.IsFailed)
         {
             return Result.Fail("Failed to get media");
         }
-
-        var scheduledAtLocal = DateTime.SpecifyKind(post?.ScheduledAt ?? DateTime.UtcNow, DateTimeKind.Local);
-        // var polandTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-        var scheduledTimeUtc = TimeZoneInfo.ConvertTimeToUtc(scheduledAtLocal, TimeZoneInfo.Local);
+        
+        if (!IsUtcDateIfNotConvertToUtc(post?.ScheduledAt ?? DateTime.UtcNow, out var scheduledTimeUtc))
+        {
+            return Result.Fail("Failed to parse scheduled time");
+        }
         
         var delay = scheduledTimeUtc - DateTime.UtcNow;
 
@@ -55,7 +51,7 @@ public class InstagramPostService(
         return Result.Ok(newPostId);
     }
     
-    public async Task PublishPost(InstagramPostDto post, InstagramMediaContainer media, InstagramUser instagramUser)
+    public async Task PublishPost(InstagramPostDto post, InstagramContainer media, InstagramUser instagramUser)
     {
         var result = await _instagramClient.PublishMedia(instagramUser.AccountId, media, instagramUser.Token);
 
@@ -67,10 +63,49 @@ public class InstagramPostService(
         var postToUpdate = await _instagramPostRepository.GetById(post.Id);
         if (postToUpdate is not null)
         {
-            _instagramPostRepository.Detach(postToUpdate);
-            var updatedPost = postToUpdate with { IsPublished = true };
-        
-            await _instagramPostRepository.Update(updatedPost);
+            postToUpdate.IsPublished = true;
+            await _instagramPostRepository.Update(postToUpdate);
         }
+    }
+
+    public async Task<IEnumerable<InstagramMediaDetail>> GetPostMedia(Guid userId, int pageNumber, int pageSize)
+    {
+        // var postsData = await _instagramPostRepository.GetAll();
+        var instagramUser = await _instagramUserRepository.GetByUserId(userId);
+
+        var userDetail = await _instagramClient.GetUserDetail(instagramUser.AccountId, instagramUser.Token);
+
+        if (userDetail?.Value?.Media.Data.Count == 0)
+        {
+            return [];
+        }
+        
+        var mediaData = new List<InstagramMediaDetail>();
+        
+        var paginatedMedia = userDetail.Value.Media.Data.Skip(pageNumber * pageSize).Take(pageSize);
+        
+        foreach (var media in paginatedMedia)
+        {
+            var mediaResult = await _instagramClient.GetMediaDetail(media.Id, instagramUser.Token);
+            if (mediaResult.IsSuccess)
+            {
+                mediaData.Add(mediaResult.Value);
+            }
+        }
+        
+        return mediaData;
+    }
+
+    private bool IsUtcDateIfNotConvertToUtc(DateTime scheduledAt, out DateTime scheduledAtUtc)
+    {
+        if (scheduledAt.Kind == DateTimeKind.Utc)
+        {
+            scheduledAtUtc = scheduledAt;
+            return true;
+        }
+
+        scheduledAtUtc = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Local);
+        scheduledAtUtc = TimeZoneInfo.ConvertTimeToUtc(scheduledAtUtc, TimeZoneInfo.Local);
+        return true;
     }
 }

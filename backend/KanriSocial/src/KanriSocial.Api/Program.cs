@@ -1,6 +1,7 @@
 using System.Text;
 using Hangfire;
 using Hangfire.PostgreSql;
+using KanriSocial.Api.Middlewares;
 // using KanriSocial.Api.Routings.Instagram;
 using KanriSocial.Application;
 using KanriSocial.Domain.Models;
@@ -19,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Kanri Social API", Version = "v1" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -95,6 +96,8 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -103,6 +106,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<TokenMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -12,6 +12,7 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient(nameof(InstagramClient));
     private readonly IConfiguration _configuration = configuration;
     
+    // add validation to refresh access token if publish date is more than 60 days
     public async Task<Result<InstagramTokenResponse?>> GetLongLivedToken(string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
@@ -53,7 +54,7 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
 
     public async Task<Result<InstagramUserDetail?>> GetUserDetail(string instagramUserId, string accessToken)
     {
-        List<string> fields = ["username", "biography", "media_count", "followers_count", "follows_count", "name", "profile_picture_url", "website"];
+        List<string> fields = ["username", "biography", "media_count", "followers_count", "follows_count", "name", "profile_picture_url", "website", "media"];
         
         var queryParams = new Dictionary<string, string?>
         {
@@ -70,7 +71,6 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         List<string> fields = [
             "caption", 
             "comments_count", 
-            "copyright_check_information", 
             "id", 
             "is_comment_enabled", 
             "is_shared_to_feed", 
@@ -84,7 +84,7 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
             "thumbnail_url", 
             "timestamp", 
             "username"];
-        // check required permissions
+        
         var queryParams = new Dictionary<string, string?>
         {
             ["fields"] = string.Join(",", fields),

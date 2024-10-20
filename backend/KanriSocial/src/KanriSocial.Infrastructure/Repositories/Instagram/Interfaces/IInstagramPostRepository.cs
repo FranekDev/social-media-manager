@@ -12,5 +12,5 @@ public interface IInstagramPostRepository
     Task Update(InstagramPost post);
     Task Delete(Guid id);
     Task<IEnumerable<InstagramUser>> GetByInstagramUserId(Guid instagramUserId);
-    void Detach(InstagramPost post);
+    Task<IEnumerable<InstagramPost>> GetUnpublishedPosts(Guid userId);
 }

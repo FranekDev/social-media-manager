@@ -67,8 +67,14 @@ public class KanriSocialDbContext : IdentityDbContext<User>
             .WithOne(ip => ip.InstagramUser)
             .HasForeignKey(ip => ip.InstagramUserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<UserToken>()
+            .HasOne(ut => ut.User)
+            .WithOne()
+            .HasForeignKey<UserToken>(ut => ut.UserId);
     }
     
     public DbSet<InstagramUser> InstagramUsers { get; set; }
     public DbSet<InstagramPost> InstagramPosts { get; set; }
+    public DbSet<UserToken> UserTokens { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using KanriSocial.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KanriSocial.Infrastructure.Migrations
 {
     [DbContext(typeof(KanriSocialDbContext))]
-    partial class KanriSocialDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020105358_UserTokenUpdateToSet")]
+    partial class UserTokenUpdateToSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

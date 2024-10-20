@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KanriSocial.Infrastructure.Migrations
 {
     [DbContext(typeof(KanriSocialDbContext))]
-    [Migration("20241016175003_test2")]
-    partial class test2
+    [Migration("20241020103217_UserTokens")]
+    partial class UserTokens
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,31 @@ namespace KanriSocial.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("KanriSocial.Domain.Models.UserToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -307,6 +332,17 @@ namespace KanriSocial.Infrastructure.Migrations
                     b.HasOne("KanriSocial.Domain.Models.User", "User")
                         .WithOne()
                         .HasForeignKey("KanriSocial.Domain.Models.Instagram.User.InstagramUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("KanriSocial.Domain.Models.UserToken", b =>
+                {
+                    b.HasOne("KanriSocial.Domain.Models.User", "User")
+                        .WithOne()
+                        .HasForeignKey("KanriSocial.Domain.Models.UserToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

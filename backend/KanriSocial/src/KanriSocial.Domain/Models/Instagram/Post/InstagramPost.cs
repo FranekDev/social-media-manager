@@ -14,19 +14,21 @@ public record InstagramPost
     
     [Required]
     [Url]
-    public string ImageUrl { get; init; }
+    public string ImageUrl { get; set; }
+    
+    //public byte[] ImageBytes { get; set; }
     
     [Required]
     [StringLength(2200)]
-    public string? Caption { get; init; }
+    public string? Caption { get; set; }
     
     [Required]
-    public DateTime ScheduledAt { get; init; }
+    public DateTime ScheduledAt { get; set; }
     
     [Required]
-    public string ContainerId { get; init; }
+    public string ContainerId { get; set; }
 
-    public bool IsPublished { get; init; } = false;
+    public bool IsPublished { get; set; } = false;
     
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

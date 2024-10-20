@@ -52,11 +52,12 @@ public class InstagramPostRepository(KanriSocialDbContext context, IMapper mappe
     public async Task<IEnumerable<InstagramUser>> GetByInstagramUserId(Guid instagramUserId)
     {
         return await _context.InstagramUsers.Where(x => x.Id == instagramUserId).ToListAsync();
-        // return [];
     }
-    
-    public void Detach(InstagramPost post)
+
+    public async Task<IEnumerable<InstagramPost>> GetUnpublishedPosts(Guid userId)
     {
-        _context.Entry(post).State = EntityState.Detached;
+        return await _context.InstagramPosts
+            .Where(x => x.InstagramUser.UserId == userId.ToString() && !x.IsPublished)
+            .ToListAsync();
     }
 }
