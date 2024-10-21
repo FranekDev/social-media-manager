@@ -63,4 +63,13 @@ public interface IInstagramClient
     /// <param name="accessToken">User's access token</param>
     /// <returns>The task result contains Instagram comment replies</returns>
     Task<Result<InstagramCommentData?>> GetCommentReplies(string commentId, string accessToken);
+    
+    /// <summary>
+    /// Reply to a comment on Instagram.
+    /// </summary>
+    /// <param name="commentId">Instagram comment Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <param name="message">Message</param>
+    /// <returns>The task result contains Instagram comment reply Id</returns>
+    Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string accessToken, string message);
 }

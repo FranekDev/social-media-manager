@@ -116,4 +116,16 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         var uri = BuildUri($"{commentId}/replies", queryParams);
         return await GetFromApiWithFailMessage<InstagramCommentData>(uri, "Failed to get comment replies");
     }
+
+    public Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string accessToken, string message)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["message"] = message,
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri($"{commentId}/replies", queryParams);
+        return PostToApiWithFailMessage<InstagramCommentReply>(uri, null, "Failed to reply to comment");
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using FluentResults;
+using KanriSocial.Application.Features.Instagram.Comment.Commands.CreateCommentReply;
 using KanriSocial.Application.Features.Instagram.Comment.Queries.GetInstagramCommentReplies;
 using KanriSocial.Application.Features.Instagram.Comment.Queries.GetInstagramPostComments;
 using KanriSocial.Shared.Dtos.Instagram;
@@ -48,5 +49,23 @@ public class InstagramCommentController(ISender sender) : ControllerBase
         }
         
         return Ok(result?.Value ?? []);
+    }
+
+    [HttpPost("{commentId}/replies")]
+    public async Task<ActionResult<Result<InstagramCommentReply>>> ReplyToComment([FromRoute] string commentId, [FromBody] CreateCommentReplyRequest request)
+    {
+        var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(userId, out var userIdGuid))
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new CreateCommentReplyCommand(commentId, request.Message, userIdGuid));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(result?.Value);
     }
 }

@@ -114,6 +114,25 @@ public class InstagramPostService(
         return result.Value?.Data ?? [];
     }
 
+    public async Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string message, Guid userId)
+    {
+        var instagramUser = await _instagramUserRepository.GetByUserId(userId);
+        
+        if (instagramUser is null)
+        {
+            return Result.Fail("User not found");
+        }
+        
+        var result = await _instagramClient.ReplyToComment(commentId, instagramUser.Token, message);
+        if (result.IsFailed)
+        {
+            return Result.Fail("Failed to reply to comment");
+        }
+        
+        
+        return Result.Ok(result.Value);
+    }
+
     private bool IsUtcDateIfNotConvertToUtc(DateTime scheduledAt, out DateTime scheduledAtUtc)
     {
         if (scheduledAt.Kind == DateTimeKind.Utc)
