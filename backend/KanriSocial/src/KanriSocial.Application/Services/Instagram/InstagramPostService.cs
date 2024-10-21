@@ -96,6 +96,24 @@ public class InstagramPostService(
         return mediaData;
     }
 
+    public async Task<IEnumerable<InstagramComment>> GetPostComments(string mediaId, Guid userId)
+    {
+        var instagramUser = await _instagramUserRepository.GetByUserId(userId);
+        
+        var result = await _instagramClient.GetMediaComments(mediaId, instagramUser.Token);
+        return result.Value?.Data ?? [];
+    }
+    
+    public async Task<IEnumerable<InstagramComment>> GetCommentReplies(string commentId, Guid userId)
+    {
+        var instagramUser = await _instagramUserRepository.GetByUserId(userId);
+        
+        var result = await _instagramClient.GetCommentReplies(commentId, instagramUser.Token);
+        
+        // add validation is comment id is correct or return error result
+        return result.Value?.Data ?? [];
+    }
+
     private bool IsUtcDateIfNotConvertToUtc(DateTime scheduledAt, out DateTime scheduledAtUtc)
     {
         if (scheduledAt.Kind == DateTimeKind.Utc)

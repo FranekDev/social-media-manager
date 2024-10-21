@@ -94,4 +94,26 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         var uri = BuildUri(instagramMediaId, queryParams);
         return await GetFromApiWithFailMessage<InstagramMediaDetail>(uri, "Failed to get media detail");
     }
+    
+    public async Task<Result<InstagramCommentData?>> GetMediaComments(string instagramMediaId, string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri($"{instagramMediaId}/comments", queryParams);
+        return await GetFromApiWithFailMessage<InstagramCommentData>(uri, "Failed to get media comments");
+    }
+    
+    public async Task<Result<InstagramCommentData?>> GetCommentReplies(string commentId, string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri($"{commentId}/replies", queryParams);
+        return await GetFromApiWithFailMessage<InstagramCommentData>(uri, "Failed to get comment replies");
+    }
 }

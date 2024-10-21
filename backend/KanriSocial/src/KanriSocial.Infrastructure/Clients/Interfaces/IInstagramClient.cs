@@ -47,4 +47,20 @@ public interface IInstagramClient
     /// <param name="accessToken">User's access token</param>
     /// <returns>The task result contains the Instagram Media object</returns>
     Task<Result<InstagramMediaDetail?>> GetMediaDetail(string instagramMediaId, string accessToken);
+    
+    /// <summary>
+    /// Get media comments from Instagram.
+    /// </summary>
+    /// <param name="instagramMediaId">Instagram media Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <returns>The task result contains Instagram Media comments</returns>
+    Task<Result<InstagramCommentData?>> GetMediaComments(string instagramMediaId, string accessToken);
+    
+    /// <summary>
+    /// Get comment replies from Instagram.
+    /// </summary>
+    /// <param name="commentId">Instagram comment Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <returns>The task result contains Instagram comment replies</returns>
+    Task<Result<InstagramCommentData?>> GetCommentReplies(string commentId, string accessToken);
 }

@@ -8,7 +8,7 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
 {
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient(clientName);
     
-    protected string BuildUri(string path, IDictionary<string, string?> queryParams)
+    protected string BuildUri(string path, IDictionary<string, string?>? queryParams)
     {
         var basePath = _httpClient.BaseAddress?.AbsolutePath.TrimEnd('/') ?? string.Empty;
         var fullPath = $"{basePath}/{path.TrimStart('/')}";
@@ -23,8 +23,11 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
             Path = fullPath
         };
 
-        var query = QueryHelpers.AddQueryString(string.Empty, queryParams);
-        uriBuilder.Query = query.TrimStart('?');
+        if (queryParams is not null)
+        {
+            var query = QueryHelpers.AddQueryString(string.Empty, queryParams);
+            uriBuilder.Query = query.TrimStart('?');
+        }
 
         return uriBuilder.Uri.ToString();
     }

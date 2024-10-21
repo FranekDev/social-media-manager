@@ -11,4 +11,6 @@ public interface IInstagramPostService
     Task<Result<Guid>> SchedulePost(InstagramPostDto post, InstagramUser instagramUser);
     Task PublishPost(InstagramPostDto post, InstagramContainer media, InstagramUser instagramUser);
     Task<IEnumerable<InstagramMediaDetail>> GetPostMedia(Guid userId, int pageNumber, int pageSize);
+    Task<IEnumerable<InstagramComment>> GetPostComments(string mediaId, Guid userId);
+    Task<IEnumerable<InstagramComment>> GetCommentReplies(string commentId, Guid userId);
 }

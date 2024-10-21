@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <Folder Include="Features\" />
+      <Folder Include="Features\Instagram\Comment\Commands\" />
+      <Folder Include="Features\Instagram\Comment\Queries\" />
     </ItemGroup>
 
     <ItemGroup>
