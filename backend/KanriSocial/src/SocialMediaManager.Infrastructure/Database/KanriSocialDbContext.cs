@@ -70,9 +70,35 @@ public class KanriSocialDbContext : IdentityDbContext<User>
             .HasOne(ut => ut.User)
             .WithOne()
             .HasForeignKey<UserToken>(ut => ut.UserId);
+        
+        builder.Entity<InstagramReel>()
+            .Property(ir => ir.Id)
+            .HasColumnType("uuid");
+        
+        builder.Entity<InstagramReel>()
+            .Property(ir => ir.CreatedAt)
+            .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        
+        builder.Entity<InstagramReel>()
+            .Property(ir => ir.ScheduledAt)
+            .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        
+        builder.Entity<InstagramReel>()
+            .HasOne(ir => ir.InstagramUser)
+            .WithMany(iu => iu.InstagramReels)
+            .HasForeignKey(ir => ir.InstagramUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<InstagramUser>()
+            .HasMany(iu => iu.InstagramReels)
+            .WithOne(ip => ip.InstagramUser)
+            .HasForeignKey(ip => ip.InstagramUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
     }
     
     public DbSet<InstagramUser> InstagramUsers { get; set; }
     public DbSet<InstagramPost> InstagramPosts { get; set; }
     public DbSet<UserToken> UserTokens { get; set; }
+    public DbSet<InstagramReel> InstagramReels { get; set; }
 }

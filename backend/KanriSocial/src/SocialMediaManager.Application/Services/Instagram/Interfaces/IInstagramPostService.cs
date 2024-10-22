@@ -13,4 +13,6 @@ public interface IInstagramPostService
     Task<IEnumerable<InstagramComment>> GetPostComments(string mediaId, Guid userId);
     Task<IEnumerable<InstagramComment>> GetCommentReplies(string commentId, Guid userId);
     Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string message, Guid userId);
+    Task<Result<Guid>> ScheduleReel(InstagramReelDto reel, InstagramUser instagramUser);
+    Task PublishReel(InstagramReelDto reel, InstagramContainer media, InstagramUser instagramUser);
 }

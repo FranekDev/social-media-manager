@@ -127,4 +127,18 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         var uri = BuildUri($"{commentId}/replies", queryParams);
         return PostToApiWithFailMessage<InstagramCommentReply>(uri, null, "Failed to reply to comment");
     }
+
+    public async Task<Result<InstagramContainer?>> GetReelMedia(string instagramUserId, string videoUrl, string? caption, string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["video_url"] = videoUrl,
+            ["caption"] = caption,
+            ["media_type"] = "REELS",
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri($"{instagramUserId}/media", queryParams);
+        return await PostToApiWithFailMessage<InstagramContainer>(uri, null, "Failed to get reel media");
+    }
 }

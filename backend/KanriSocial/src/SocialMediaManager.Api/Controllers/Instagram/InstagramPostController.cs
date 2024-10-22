@@ -8,6 +8,7 @@ using SocialMediaManager.Shared.Dtos.Instagram;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramReel;
 
 namespace SocialMediaManager.Api.Controllers.Instagram;
 
@@ -72,5 +73,23 @@ public class InstagramPostController(ISender sender) : ControllerBase
         }
         
         return Ok(result.Value);
+    }
+    
+    [HttpPost("reel")]
+    public async Task<IActionResult> CreateInstagramReelPost([FromBody] CreateInstagramReelRequest request)
+    {
+        var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(userId, out var userIdGuid))
+        {
+            return BadRequest("Invalid user id");
+        }
+        
+        var result = await _sender.Send(new CreateInstagramReelCommand(request.VideoBytes, request?.Caption, request.ScheduledAt, userIdGuid));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(new { PostId = result.Value });
     }
 }

@@ -24,6 +24,12 @@ public class ContentStorageService : IContentStorageService
         return $"{_baseURl}/Instagram/Posts/{path}";
     }
     
+    public async Task<string> UploadInstagramReelAndGetUrl(Stream stream, string path)
+    {
+        await Upload(stream, $"Instagram/Reels/{path}");
+        return $"{_baseURl}/Instagram/Reels/{path}";
+    }
+    
     public async Task Upload(Stream stream, string path)
     {
         await _bunnyCDNStorage.UploadAsync(stream, $"{_storageZoneName}/{path}");

@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using System.Runtime.InteropServices.Marshalling;
+using FluentResults;
 using SocialMediaManager.Shared.Dtos.Instagram;
 
 namespace SocialMediaManager.Infrastructure.Clients.Interfaces;
@@ -71,4 +72,14 @@ public interface IInstagramClient
     /// <param name="message">Message</param>
     /// <returns>The task result contains Instagram comment reply Id</returns>
     Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string accessToken, string message);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="instagramUserId"></param>
+    /// <param name="videoUrl"></param>
+    /// <param name="caption"></param>
+    /// <param name="accessToken"></param>
+    /// <returns></returns>
+    Task<Result<InstagramContainer?>> GetReelMedia(string instagramUserId, string videoUrl, string? caption, string accessToken);
 }

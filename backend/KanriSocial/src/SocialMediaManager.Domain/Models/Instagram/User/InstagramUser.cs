@@ -15,4 +15,5 @@ public class InstagramUser
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public ICollection<InstagramPost> InstagramPosts { get; init; } = new List<InstagramPost>();
+    public ICollection<InstagramReel> InstagramReels { get; init; } = new List<InstagramReel>();
 }

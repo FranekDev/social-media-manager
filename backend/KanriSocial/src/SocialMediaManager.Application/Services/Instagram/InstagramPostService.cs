@@ -14,11 +14,13 @@ namespace SocialMediaManager.Application.Services.Instagram;
 public class InstagramPostService(
     IInstagramClient instagramClient, 
     IInstagramUserRepository instagramUserRepository,
-    IInstagramPostRepository instagramPostRepository) : IInstagramPostService
+    IInstagramPostRepository instagramPostRepository,
+    IInstagramReelRepository instagramReelRepository) : IInstagramPostService
 {
     private readonly IInstagramClient _instagramClient = instagramClient;
     private readonly IInstagramUserRepository _instagramUserRepository = instagramUserRepository;
     private readonly IInstagramPostRepository _instagramPostRepository = instagramPostRepository;
+    private readonly IInstagramReelRepository _instagramReelRepository = instagramReelRepository;
 
     public async Task<Result<Guid>> SchedulePost(InstagramPostDto post, InstagramUser instagramUser)
     {
@@ -131,6 +133,56 @@ public class InstagramPostService(
         
         
         return Result.Ok(result.Value);
+    }
+
+    public async Task<Result<Guid>> ScheduleReel(InstagramReelDto reel, InstagramUser instagramUser)
+    {
+        var mediaRsult = await _instagramClient.GetReelMedia(instagramUser.AccountId, reel.VideoUrl, reel.Caption, instagramUser.Token);
+        if (mediaRsult.IsFailed)
+        {
+            return Result.Fail("Failed to get reel media");
+        }
+        
+        if (!IsUtcDateIfNotConvertToUtc(reel?.ScheduledAt ?? DateTime.UtcNow, out var scheduledTimeUtc))
+        {
+            return Result.Fail("Failed to parse scheduled time");
+        }
+        
+        var delay = scheduledTimeUtc - DateTime.UtcNow;
+
+        var instagramReel = new InstagramReel
+        {
+            InstagramUser = instagramUser,
+            VideoUrl = reel.VideoUrl,
+            Caption = reel.Caption,
+            ScheduledAt = reel.ScheduledAt,
+            ContainerId = mediaRsult.Value?.Id
+        };
+
+        var newReelId = await _instagramReelRepository.Create(instagramReel);
+        reel.Id = newReelId;
+        
+        BackgroundJob.Schedule<IInstagramPostService>(x => x.PublishReel(reel, mediaRsult.Value, instagramUser), delay);
+        
+        return Result.Ok(newReelId);
+    }
+    
+    public async Task PublishReel(InstagramReelDto reel, InstagramContainer media, InstagramUser instagramUser)
+    {
+        var result = await _instagramClient.PublishMedia(instagramUser.AccountId, media, instagramUser.Token);
+
+        if (result.IsFailed)
+        {
+            return;
+        }
+        
+        var reelToUpdate = await _instagramReelRepository.GetById(reel.Id);
+        if (reelToUpdate is not null)
+        {
+            reelToUpdate.IsPublished = true;
+            reelToUpdate.MediaId = result.Value?.Id;
+            await _instagramReelRepository.Update(reelToUpdate);
+        }
     }
 
     private bool IsUtcDateIfNotConvertToUtc(DateTime scheduledAt, out DateTime scheduledAtUtc)

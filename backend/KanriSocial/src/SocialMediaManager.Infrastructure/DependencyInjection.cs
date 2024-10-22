@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IInstagramUserRepository, InstagramUserRepository>();
         services.AddScoped<IInstagramPostRepository, InstagramPostRepository>();
         services.AddScoped<UserTokenRepository>();
+        services.AddScoped<IInstagramReelRepository, InstagramReelRepository>();
         
         return services;
     }
