@@ -6,13 +6,13 @@ using SocialMediaManager.Application.Services.Instagram.Interfaces;
 namespace SocialMediaManager.Application.Features.Instagram.Comment.Queries.GetInstagramCommentReplies;
 
 public class GetInstagramCommentRepliesQueryHandler(
-    IInstagramPostService instagramPostService) : IRequestHandler<GetInstagramCommentRepliesQuery, Result<IEnumerable<InstagramComment>>>
+    IInstagramMediaService instagramMediaService) : IRequestHandler<GetInstagramCommentRepliesQuery, Result<IEnumerable<InstagramComment>>>
 {
-    private readonly IInstagramPostService _instagramPostService = instagramPostService;
+    private readonly IInstagramMediaService _instagramMediaService = instagramMediaService;
 
     public async Task<Result<IEnumerable<InstagramComment>>> Handle(GetInstagramCommentRepliesQuery request, CancellationToken cancellationToken)
     {
-        var comments = await _instagramPostService.GetCommentReplies(request.CommentId, request.UserId);
+        var comments = await _instagramMediaService.GetCommentReplies(request.CommentId, request.UserId);
         return Result.Ok(comments);
     }
 }

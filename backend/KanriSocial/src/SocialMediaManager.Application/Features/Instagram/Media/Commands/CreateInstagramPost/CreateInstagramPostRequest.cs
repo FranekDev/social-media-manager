@@ -1,4 +1,4 @@
-﻿namespace SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
+﻿namespace SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateInstagramPost;
 
 public record CreateInstagramPostRequest
 {

@@ -1,18 +1,18 @@
 ﻿using FluentResults;
-using SocialMediaManager.Domain.Dtos.Instagram;
-using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
 using MediatR;
 using SocialMediaManager.Application.Services.Instagram.Interfaces;
 using SocialMediaManager.Application.Services.Interfaces;
+using SocialMediaManager.Domain.Dtos.Instagram;
+using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
 
-namespace SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
+namespace SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateInstagramPost;
 
 public class CreateInstagramPostCommandHandler(
-    IInstagramPostService instagramPostService,
+    IInstagramMediaService instagramMediaService,
     IInstagramUserRepository instagramUserRepository,
     IContentStorageService contentStorageService) : IRequestHandler<CreateInstagramPostCommand, Result<Guid>>
 {
-    private readonly IInstagramPostService _instagramPostService = instagramPostService;
+    private readonly IInstagramMediaService _instagramMediaService = instagramMediaService;
     private readonly IInstagramUserRepository _instagramUserRepository = instagramUserRepository;
     private readonly IContentStorageService _contentStorageService = contentStorageService;
     
@@ -23,7 +23,7 @@ public class CreateInstagramPostCommandHandler(
         var post = new InstagramPostDto(Guid.NewGuid(), imageUrl, request.Caption, request.ScheduledAt, request.UserId, false);
         var instagramUser = await _instagramUserRepository.GetByUserId(post.UserId);
         
-        return await _instagramPostService.SchedulePost(post, instagramUser);
+        return await _instagramMediaService.SchedulePost(post, instagramUser);
     }
 }
 

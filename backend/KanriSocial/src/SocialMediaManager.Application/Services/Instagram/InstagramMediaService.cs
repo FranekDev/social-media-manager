@@ -8,14 +8,15 @@ using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
 using SocialMediaManager.Shared.Dtos.Instagram;
 using SocialMediaManager.Application.Services.Instagram.Interfaces;
+using SocialMediaManager.Shared.Enums.Instagram;
 
 namespace SocialMediaManager.Application.Services.Instagram;
 
-public class InstagramPostService(
+public class InstagramMediaService(
     IInstagramClient instagramClient, 
     IInstagramUserRepository instagramUserRepository,
     IInstagramPostRepository instagramPostRepository,
-    IInstagramReelRepository instagramReelRepository) : IInstagramPostService
+    IInstagramReelRepository instagramReelRepository) : IInstagramMediaService
 {
     private readonly IInstagramClient _instagramClient = instagramClient;
     private readonly IInstagramUserRepository _instagramUserRepository = instagramUserRepository;
@@ -49,7 +50,7 @@ public class InstagramPostService(
         };
         var newPostId = await _instagramPostRepository.Create(instagramPost);
         
-        BackgroundJob.Schedule<IInstagramPostService>(x => x.PublishPost(post, mediaResult.Value, instagramUser), delay);
+        BackgroundJob.Schedule<IInstagramMediaService>(x => x.PublishPost(post, mediaResult.Value, instagramUser), delay);
         return Result.Ok(newPostId);
     }
     
@@ -162,7 +163,7 @@ public class InstagramPostService(
         var newReelId = await _instagramReelRepository.Create(instagramReel);
         reel.Id = newReelId;
         
-        BackgroundJob.Schedule<IInstagramPostService>(x => x.PublishReel(reel, mediaRsult.Value, instagramUser), delay);
+        BackgroundJob.Schedule<IInstagramMediaService>(x => x.PublishReel(reel, mediaRsult.Value, instagramUser), delay);
         
         return Result.Ok(newReelId);
     }
@@ -183,6 +184,15 @@ public class InstagramPostService(
             reelToUpdate.MediaId = result.Value?.Id;
             await _instagramReelRepository.Update(reelToUpdate);
         }
+    }
+    
+    public async Task<Result<InstagramMediaInsightsData?>> GetMediaInsights(
+        string mediaId, 
+        InstagramUser instagramUser, 
+        InstagramMediaInsightType insightType)
+    {
+        var result = await _instagramClient.GetMediaInsights(mediaId, instagramUser.Token, insightType);
+        return result;
     }
 
     private bool IsUtcDateIfNotConvertToUtc(DateTime scheduledAt, out DateTime scheduledAtUtc)

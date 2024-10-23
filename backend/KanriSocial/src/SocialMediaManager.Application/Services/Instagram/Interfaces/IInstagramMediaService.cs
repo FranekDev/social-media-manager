@@ -2,10 +2,11 @@
 using SocialMediaManager.Domain.Dtos.Instagram;
 using SocialMediaManager.Domain.Models.Instagram.User;
 using SocialMediaManager.Shared.Dtos.Instagram;
+using SocialMediaManager.Shared.Enums.Instagram;
 
 namespace SocialMediaManager.Application.Services.Instagram.Interfaces;
 
-public interface IInstagramPostService
+public interface IInstagramMediaService
 {
     Task<Result<Guid>> SchedulePost(InstagramPostDto post, InstagramUser instagramUser);
     Task PublishPost(InstagramPostDto post, InstagramContainer media, InstagramUser instagramUser);
@@ -15,4 +16,5 @@ public interface IInstagramPostService
     Task<Result<InstagramCommentReply?>> ReplyToComment(string commentId, string message, Guid userId);
     Task<Result<Guid>> ScheduleReel(InstagramReelDto reel, InstagramUser instagramUser);
     Task PublishReel(InstagramReelDto reel, InstagramContainer media, InstagramUser instagramUser);
+    Task<Result<InstagramMediaInsightsData?>> GetMediaInsights(string mediaId, InstagramUser instagramUser, InstagramMediaInsightType insightType);
 }

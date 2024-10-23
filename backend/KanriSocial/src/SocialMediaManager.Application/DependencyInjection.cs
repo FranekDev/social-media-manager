@@ -31,7 +31,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IInstagramService, InstagramService>();
-        services.AddScoped<IInstagramPostService, InstagramPostService>();
+        services.AddScoped<IInstagramMediaService, InstagramMediaService>();
         services.AddScoped<IInstagramUserService, InstagramUserService>();
         services.AddScoped<IContentStorageService, ContentStorageService>();
         return services;

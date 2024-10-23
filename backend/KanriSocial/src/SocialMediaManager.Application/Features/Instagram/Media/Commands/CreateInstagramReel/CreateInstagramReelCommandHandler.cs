@@ -5,14 +5,14 @@ using SocialMediaManager.Application.Services.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
 using SocialMediaManager.Shared.Dtos.Instagram;
 
-namespace SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramReel;
+namespace SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateInstagramReel;
 
 public class CreateInstagramReelCommandHandler(
-    IInstagramPostService instagramPostService, 
+    IInstagramMediaService instagramMediaService, 
     IInstagramUserRepository instagramUserRepository,
     IContentStorageService contentStorageService) : IRequestHandler<CreateInstagramReelCommand, Result<Guid>>
 {
-    private readonly IInstagramPostService _instagramPostService = instagramPostService;
+    private readonly IInstagramMediaService _instagramMediaService = instagramMediaService;
     private readonly IInstagramUserRepository _instagramUserRepository = instagramUserRepository;
     private readonly IContentStorageService _contentStorageService = contentStorageService;
     
@@ -34,7 +34,7 @@ public class CreateInstagramReelCommandHandler(
             ScheduledAt = request.ScheduledAt
         };
         
-        var result = await _instagramPostService.ScheduleReel(instagramReel, user);
+        var result = await _instagramMediaService.ScheduleReel(instagramReel, user);
         
         return Result.Ok(result.Value);
     }

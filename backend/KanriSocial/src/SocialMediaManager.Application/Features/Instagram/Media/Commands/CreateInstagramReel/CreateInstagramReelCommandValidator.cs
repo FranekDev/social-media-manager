@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramReel;
+namespace SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateInstagramReel;
 
 public class CreateInstagramReelCommandValidator : AbstractValidator<CreateInstagramReelRequest>
 {

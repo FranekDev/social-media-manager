@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SocialMediaManager.Application.Features.Instagram.Post.Commands.CreateInstagramPost;
+namespace SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateInstagramPost;
 
 public sealed class CreateInstagramPostCommandValidator : AbstractValidator<CreateInstagramPostCommand>
 {

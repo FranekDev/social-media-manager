@@ -2,6 +2,7 @@
 using SocialMediaManager.Shared.Dtos.Instagram;
 using Microsoft.Extensions.Configuration;
 using SocialMediaManager.Infrastructure.Clients.Interfaces;
+using SocialMediaManager.Shared.Enums.Instagram;
 
 namespace SocialMediaManager.Infrastructure.Clients;
 
@@ -140,5 +141,51 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         
         var uri = BuildUri($"{instagramUserId}/media", queryParams);
         return await PostToApiWithFailMessage<InstagramContainer>(uri, null, "Failed to get reel media");
+    }
+    
+    public async Task<Result<InstagramMediaInsightsData?>> GetMediaInsights(string instagramMediaId, string accessToken, InstagramMediaInsightType insightType)
+    {
+        List<string> metrics =
+        [
+            "comments",
+            "likes",
+            "reach",
+            "saved",
+            "shares",
+            "total_interactions"
+        ];
+
+        List<string> reelMetrics =
+        [
+            "clips_replays_count",
+            "plays",
+            "ig_reels_aggregated_all_plays_count",
+            "ig_reels_avg_watch_time",
+            "ig_reels_video_view_total_time"
+        ];
+
+        List<string> postMetrics =
+        [
+            "impressions",
+            "follows",
+            "profile_activity",
+            "profile_visits"
+        ];
+        
+        metrics.AddRange(insightType switch
+        {
+            InstagramMediaInsightType.REEL => reelMetrics,
+            InstagramMediaInsightType.POST => postMetrics,
+            _ => []
+        });
+        
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["metric"] = string.Join(",", metrics),
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri($"{instagramMediaId}/insights", queryParams);
+        return await GetFromApiWithFailMessage<InstagramMediaInsightsData>(uri, "Failed to get post insights");
     }
 }

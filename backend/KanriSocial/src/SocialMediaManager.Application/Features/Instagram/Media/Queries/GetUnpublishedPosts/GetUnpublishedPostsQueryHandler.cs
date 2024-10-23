@@ -1,10 +1,10 @@
 ﻿using FluentResults;
+using MediatR;
 using SocialMediaManager.Domain.Dtos.Instagram;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
-using MediatR;
 
-namespace SocialMediaManager.Application.Features.Instagram.Post.Queries.GetUnpublishedPosts;
+namespace SocialMediaManager.Application.Features.Instagram.Media.Queries.GetUnpublishedPosts;
 
 public class GetUnpublishedPostsQueryHandler(
     IInstagramUserRepository userRepository, 

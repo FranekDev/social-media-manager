@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices.Marshalling;
 using FluentResults;
 using SocialMediaManager.Shared.Dtos.Instagram;
+using SocialMediaManager.Shared.Enums.Instagram;
 
 namespace SocialMediaManager.Infrastructure.Clients.Interfaces;
 
@@ -82,4 +83,13 @@ public interface IInstagramClient
     /// <param name="accessToken"></param>
     /// <returns></returns>
     Task<Result<InstagramContainer?>> GetReelMedia(string instagramUserId, string videoUrl, string? caption, string accessToken);
+ 
+    /// <summary>
+    /// Get insights data for a specific Instagram media (post or reel).
+    /// </summary>
+    /// <param name="instagramMediaId">Instagram media Id</param>
+    /// <param name="accessToken">User's access token</param>
+    /// <param name="insightType">Type of Instagram media insight (post or reel)</param>
+    /// <returns>The task result contains the Instagram media insights data</returns>
+    Task<Result<InstagramMediaInsightsData?>> GetMediaInsights(string instagramMediaId, string accessToken, InstagramMediaInsightType insightType);
 }
