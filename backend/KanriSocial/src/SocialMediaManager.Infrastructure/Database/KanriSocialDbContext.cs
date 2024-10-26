@@ -3,17 +3,12 @@ using SocialMediaManager.Domain.Models.Instagram.Post;
 using SocialMediaManager.Domain.Models.Instagram.User;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SocialMediaManager.Domain.Models.Facebook;
 
 namespace SocialMediaManager.Infrastructure.Database;
 
-public class KanriSocialDbContext : IdentityDbContext<User>
+public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options) : IdentityDbContext<User>(options)
 {
-    public KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options)
-    : base(options)
-    {
-    }
-    
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -94,11 +89,18 @@ public class KanriSocialDbContext : IdentityDbContext<User>
             .WithOne(ip => ip.InstagramUser)
             .HasForeignKey(ip => ip.InstagramUserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
+        builder.Entity<FacebookFeedPost>()
+        .HasOne(fp => fp.FacebookUser)
+        .WithMany(fu => fu.FacebookFeedPosts)
+        .HasForeignKey(fp => fp.FacebookUserId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
     
     public DbSet<InstagramUser> InstagramUsers { get; set; }
     public DbSet<InstagramPost> InstagramPosts { get; set; }
     public DbSet<UserToken> UserTokens { get; set; }
     public DbSet<InstagramReel> InstagramReels { get; set; }
+    public DbSet<FacebookUser> FacebookUsers { get; set; }
+    public DbSet<FacebookFeedPost> FacebookFeedPosts { get; set; }
 }

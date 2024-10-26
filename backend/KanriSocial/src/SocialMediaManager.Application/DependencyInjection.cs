@@ -3,6 +3,8 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using SocialMediaManager.Application.Behaviors;
 using SocialMediaManager.Application.Services;
+using SocialMediaManager.Application.Services.Facebook;
+using SocialMediaManager.Application.Services.Facebook.Interfaces;
 using SocialMediaManager.Application.Services.Instagram;
 using SocialMediaManager.Application.Services.Instagram.Interfaces;
 using SocialMediaManager.Application.Services.Interfaces;
@@ -34,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IInstagramMediaService, InstagramMediaService>();
         services.AddScoped<IInstagramUserService, InstagramUserService>();
         services.AddScoped<IContentStorageService, ContentStorageService>();
+        services.AddScoped<IFacebookService, FacebookService>();
         return services;
     }
 }

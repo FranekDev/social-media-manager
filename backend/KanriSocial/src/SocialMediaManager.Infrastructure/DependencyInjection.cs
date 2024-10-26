@@ -6,6 +6,8 @@ using SocialMediaManager.Infrastructure.Clients;
 using SocialMediaManager.Infrastructure.Clients.Interfaces;
 using SocialMediaManager.Infrastructure.Database;
 using SocialMediaManager.Infrastructure.Repositories;
+using SocialMediaManager.Infrastructure.Repositories.Facebook;
+using SocialMediaManager.Infrastructure.Repositories.Facebook.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
@@ -34,6 +36,8 @@ public static class DependencyInjection
         services.AddScoped<IInstagramPostRepository, InstagramPostRepository>();
         services.AddScoped<UserTokenRepository>();
         services.AddScoped<IInstagramReelRepository, InstagramReelRepository>();
+        services.AddScoped<IFacebookUserRepository, FacebookUserRepository>();
+        services.AddScoped<IFacebookFeedRepository, FacebookFeedRepository>();
         
         return services;
     }
@@ -45,7 +49,13 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(configuration["Instagram:BaseUrl"]);
         });
 
+        services.AddHttpClient<FacebookClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["Instagram:BaseUrl"]);
+        });
+
         services.AddTransient<IInstagramClient, InstagramClient>();
+        services.AddTransient<IFacebookClient, FacebookClient>();
         
         return services;
     }
