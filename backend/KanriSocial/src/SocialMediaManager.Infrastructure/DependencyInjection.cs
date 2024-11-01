@@ -12,6 +12,9 @@ using SocialMediaManager.Infrastructure.Repositories.Instagram;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.Interfaces.User;
 using SocialMediaManager.Infrastructure.Repositories.Instagram.User;
+using SocialMediaManager.Infrastructure.Repositories.TikTok;
+using SocialMediaManager.Infrastructure.Repositories.TikTok.Interfaces;
+using SocialMediaManager.Infrastructure.Security;
 
 namespace SocialMediaManager.Infrastructure;
 
@@ -26,6 +29,8 @@ public static class DependencyInjection
         services.AddRepositories();
         services.AddClients(configuration);
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<ITokenEncryptor, TokenEncryptor>();
         
         return services;
     }
@@ -38,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<IInstagramReelRepository, InstagramReelRepository>();
         services.AddScoped<IFacebookUserRepository, FacebookUserRepository>();
         services.AddScoped<IFacebookFeedRepository, FacebookFeedRepository>();
+        services.AddScoped<ITikTokUserRepository, TikTokUserRepository>();
         
         return services;
     }
@@ -53,9 +59,15 @@ public static class DependencyInjection
         {
             client.BaseAddress = new Uri(configuration["Instagram:BaseUrl"]);
         });
+        
+        services.AddHttpClient<TikTokClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["TikTok:BaseUrl"]);
+        });
 
         services.AddTransient<IInstagramClient, InstagramClient>();
         services.AddTransient<IFacebookClient, FacebookClient>();
+        services.AddTransient<ITikTokClient, TikTokClient>();
         
         return services;
     }

@@ -4,6 +4,7 @@ using SocialMediaManager.Domain.Models.Instagram.User;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaManager.Domain.Models.Facebook;
+using SocialMediaManager.Domain.Models.TikTok;
 
 namespace SocialMediaManager.Infrastructure.Database;
 
@@ -103,4 +104,5 @@ public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options
     public DbSet<InstagramReel> InstagramReels { get; set; }
     public DbSet<FacebookUser> FacebookUsers { get; set; }
     public DbSet<FacebookFeedPost> FacebookFeedPosts { get; set; }
+    public DbSet<TikTokUser> TikTokUsers { get; set; }
 }

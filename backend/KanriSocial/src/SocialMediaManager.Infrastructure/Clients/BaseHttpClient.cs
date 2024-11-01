@@ -8,7 +8,7 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
 {
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient(clientName);
     
-    protected string BuildUri(string path, IDictionary<string, string?>? queryParams)
+    protected string BuildUri(string path, IDictionary<string, string?>? queryParams = null)
     {
         var basePath = _httpClient.BaseAddress?.AbsolutePath.TrimEnd('/') ?? string.Empty;
         var fullPath = $"{basePath}/{path.TrimStart('/')}";
@@ -36,13 +36,13 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
     {
         if (!response.IsSuccessStatusCode)
         {
-            return Result.Fail<T?>("Failed to get response");
+            return Result.Fail("Failed to get response");
         }
 
         var content = response.Content.ReadAsStringAsync().Result;
         var result = JsonConvert.DeserializeObject<T>(content);
 
-        return Result.Ok(result);
+        return result;
     }
     
     protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(string uri, string failMessage)
@@ -51,8 +51,14 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
         return DeserializeOrFail<T>(response);
     }
     
-    protected async Task<Result<T?>> PostToApiWithFailMessage<T>(string uri, HttpContent? content, string failMessage)
+    protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(HttpRequestMessage request, string failMessage = "")
     {
+        var response = await _httpClient.SendAsync(request);
+        return DeserializeOrFail<T>(response);
+    }
+    
+    protected async Task<Result<T?>> PostToApiWithFailMessage<T>(string uri, HttpContent? content, string failMessage = "")
+    { 
         var response = await _httpClient.PostAsync(uri, content);
         return DeserializeOrFail<T>(response);
     }
