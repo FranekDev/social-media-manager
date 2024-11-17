@@ -29,7 +29,7 @@ public class CreateTikTokVideoCommandHandler(
        
         var fileName = $"{tiktokUser.UserId}_{Guid.NewGuid()}.mp4";
         using var stream = new MemoryStream(Convert.FromBase64String(request.VideoBytes));
-        var videoUrl = await _contentStorageService.Upload(stream, $"{TikTokContentStoragePath.VideoPath}{fileName}");
+        var videoUrl = await _contentStorageService.Upload(stream, $"{ContentStoragePath.TikTok.VideoPath}{fileName}");
 
         var postInfo = new TikTokPostInfo(request.Title, "SELF_ONLY", false, true, false, 1000);
         var sourceInfo = new TikTokSurceInfo("PULL_FROM_URL", videoUrl);
