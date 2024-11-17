@@ -7,6 +7,7 @@ using SocialMediaManager.Application.Services.TikTok.Interfaces;
 using SocialMediaManager.Infrastructure.Repositories.TikTok.Interfaces;
 using SocialMediaManager.Shared.Dtos.TikTok;
 using SocialMediaManager.Shared.Paths;
+using SocialMediaManager.Shared.Static.TikTok;
 
 namespace SocialMediaManager.Application.Features.TikTok.Commands.CreateTikTokVideo;
 
@@ -31,8 +32,8 @@ public class CreateTikTokVideoCommandHandler(
         using var stream = new MemoryStream(Convert.FromBase64String(request.VideoBytes));
         var videoUrl = await _contentStorageService.Upload(stream, $"{ContentStoragePath.TikTok.VideoPath}{fileName}");
 
-        var postInfo = new TikTokPostInfo(request.Title, "SELF_ONLY", false, true, false, 1000);
-        var sourceInfo = new TikTokSurceInfo("PULL_FROM_URL", videoUrl);
+        var postInfo = new TikTokPostInfo(request.Title, TikTokPrivaceLevel.SelfOnly, false, true, false, 1000);
+        var sourceInfo = new TikTokSurceInfo(TikTokPostSource.PullFromUrl, videoUrl);
         
         if (!request.ScheduledAt.IsUtcDateIfNotConvertToUtc(out var scheduledTimeUtc))
         {
