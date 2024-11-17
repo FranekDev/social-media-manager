@@ -8,6 +8,8 @@ using SocialMediaManager.Application.Services.Facebook.Interfaces;
 using SocialMediaManager.Application.Services.Instagram;
 using SocialMediaManager.Application.Services.Instagram.Interfaces;
 using SocialMediaManager.Application.Services.Interfaces;
+using SocialMediaManager.Application.Services.TikTok;
+using SocialMediaManager.Application.Services.TikTok.Interfaces;
 
 namespace SocialMediaManager.Application;
 
@@ -37,6 +39,8 @@ public static class DependencyInjection
         services.AddScoped<IInstagramUserService, InstagramUserService>();
         services.AddScoped<IContentStorageService, ContentStorageService>();
         services.AddScoped<IFacebookService, FacebookService>();
+        services.AddScoped<ITikTokVideoService, TikTokVideoService>();
+        
         return services;
     }
 }

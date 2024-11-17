@@ -92,10 +92,15 @@ public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<FacebookFeedPost>()
-        .HasOne(fp => fp.FacebookUser)
-        .WithMany(fu => fu.FacebookFeedPosts)
-        .HasForeignKey(fp => fp.FacebookUserId)
-        .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(fp => fp.FacebookUser)
+            .WithMany(fu => fu.FacebookFeedPosts)
+            .HasForeignKey(fp => fp.FacebookUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<TikTokVideo>()
+            .HasOne(tu => tu.TikTokUser)
+            .WithMany(tv => tv.TikTokVideos)
+            .HasForeignKey(tv => tv.TikTokUserId);
     }
     
     public DbSet<InstagramUser> InstagramUsers { get; set; }
@@ -105,4 +110,5 @@ public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options
     public DbSet<FacebookUser> FacebookUsers { get; set; }
     public DbSet<FacebookFeedPost> FacebookFeedPosts { get; set; }
     public DbSet<TikTokUser> TikTokUsers { get; set; }
+    public DbSet<TikTokVideo> TikTokVideos { get; set; }
 }

@@ -32,34 +32,40 @@ public abstract class BaseHttpClient(IHttpClientFactory httpClientFactory, strin
         return uriBuilder.Uri.ToString();
     }
     
-    private Result<T?> DeserializeOrFail<T>(HttpResponseMessage response)
+    private async Task<Result<T?>> DeserializeOrFail<T>(HttpResponseMessage response, string? failMessage = "Failed to get data from API")
     {
         if (!response.IsSuccessStatusCode)
         {
-            return Result.Fail("Failed to get response");
+            return Result.Fail(string.IsNullOrEmpty(failMessage) ? response.ReasonPhrase : failMessage);
         }
 
-        var content = response.Content.ReadAsStringAsync().Result;
+        var content = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<T>(content);
 
         return result;
     }
     
-    protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(string uri, string failMessage)
+    protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(string uri, string? failMessage = null)
     {
         var response = await _httpClient.GetAsync(uri);
-        return DeserializeOrFail<T>(response);
+        return await DeserializeOrFail<T>(response, failMessage);
     }
     
-    protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(HttpRequestMessage request, string failMessage = "")
+    protected async Task<Result<T?>> GetFromApiWithFailMessage<T>(HttpRequestMessage request, string? failMessage = null)
     {
         var response = await _httpClient.SendAsync(request);
-        return DeserializeOrFail<T>(response);
+        return await DeserializeOrFail<T>(response, failMessage);
     }
     
-    protected async Task<Result<T?>> PostToApiWithFailMessage<T>(string uri, HttpContent? content, string failMessage = "")
+    protected async Task<Result<T?>> PostToApiWithFailMessage<T>(string uri, HttpContent? content, string? failMessage = null)
     { 
         var response = await _httpClient.PostAsync(uri, content);
-        return DeserializeOrFail<T>(response);
+        return await DeserializeOrFail<T>(response, failMessage);
+    }
+    
+    protected async Task<Result<T?>> PostToApiWithFailMessage<T>(HttpRequestMessage request, string? failMessage = null)
+    {
+        var response = await _httpClient.SendAsync(request);
+        return await DeserializeOrFail<T>(response, failMessage);
     }
 }

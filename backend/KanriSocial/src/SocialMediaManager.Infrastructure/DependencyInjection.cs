@@ -44,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IFacebookUserRepository, FacebookUserRepository>();
         services.AddScoped<IFacebookFeedRepository, FacebookFeedRepository>();
         services.AddScoped<ITikTokUserRepository, TikTokUserRepository>();
+        services.AddScoped<ITikTokVideoRepository, TikTokVideoRepository>();
         
         return services;
     }

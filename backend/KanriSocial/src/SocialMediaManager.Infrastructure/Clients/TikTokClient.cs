@@ -1,8 +1,12 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using FluentResults;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SocialMediaManager.Infrastructure.Clients.Interfaces;
 using SocialMediaManager.Shared.Dtos.TikTok;
+using SocialMediaManager.Shared.Endpoints;
 using SocialMediaManager.Shared.Enums.TikTok;
 
 namespace SocialMediaManager.Infrastructure.Clients;
@@ -15,12 +19,26 @@ public class TikTokClient(IHttpClientFactory clientFactory, IConfiguration confi
     
     public async Task<Result<Response<TikTokUserInfo>?>> GetUserInfo(string accessToken)
     {
-        List<string> fields = ["open_id", "union_id", "avatar_url", "display_name"];
+        List<string> fields = 
+        [
+            "open_id", 
+            "union_id", 
+            "avatar_url", 
+            "display_name", 
+            "bio_description", 
+            "username", 
+            "follower_count", 
+            "following_count", 
+            "likes_count", 
+            "video_count", 
+            "is_verified"
+        ];
+        
         var queryParams = new Dictionary<string, string?>
         {
             ["fields"] = string.Join(",", fields)
         };
-        var uri = BuildUri("user/info/", queryParams);
+        var uri = BuildUri(TikTokApiEndpoint.UserInfo, queryParams);
         
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -32,7 +50,7 @@ public class TikTokClient(IHttpClientFactory clientFactory, IConfiguration confi
     {
         var queryParams = GetTokenQueryParams(token, tokenType);
         var content = new FormUrlEncodedContent(queryParams);
-        var uri = BuildUri("oauth/token/");
+        var uri = BuildUri(TikTokApiEndpoint.OAuthToken);
         var tokenName = tokenType == TikTokTokenType.AccessToken ? "access" : "refresh";
         
         return await PostToApiWithFailMessage<TikTokToken>(uri, content, $"Failed to retrieve TikTok {tokenName} token.");
@@ -67,5 +85,31 @@ public class TikTokClient(IHttpClientFactory clientFactory, IConfiguration confi
         };
         
         return queryParams;
+    }
+
+    public async Task<Result<Response<TikTokPostVideoFromUrl>?>> PostVideo(TikTokPostInfo postInfo, TikTokSurceInfo surceInfo, string accessToken)
+    {
+        var uri = BuildUri(TikTokApiEndpoint.PostPublishVideoInit);
+        var videoInfo = new { post_info = postInfo, source_info = surceInfo };
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var settings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            }
+        };
+        var a = JsonConvert.SerializeObject(videoInfo, settings);
+        var b = a;
+        request.Content = new StringContent(JsonConvert.SerializeObject(videoInfo, settings), Encoding.UTF8, "application/json");
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json")
+        {
+            CharSet = "UTF-8"
+        };
+        
+        
+        return await PostToApiWithFailMessage<Response<TikTokPostVideoFromUrl>>(request, "Failed to post video to TikTok.");
     }
 }
