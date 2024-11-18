@@ -110,4 +110,23 @@ public class TikTokClient(IHttpClientFactory clientFactory, IConfiguration confi
         
         return await PostToApiWithFailMessage<Response<TikTokPostVideoFromUrl>>(request, "Failed to post video to TikTok.");
     }
+
+    public async Task<Result<Response<TikTokContentPostResponse>?>> PostContent(TikTokContent content, string accessToken)
+    {
+        var uri = BuildUri(TikTokApiEndpoint.PostPublishContentInit);
+        
+        var settings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            }
+        };
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Content = new StringContent(JsonConvert.SerializeObject(content, settings), Encoding.UTF8, "application/json");
+        
+        return await PostToApiWithFailMessage<Response<TikTokContentPostResponse>>(request, "Failed to post content to TikTok.");
+    }
 }

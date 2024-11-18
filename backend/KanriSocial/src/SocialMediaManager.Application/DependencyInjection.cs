@@ -40,6 +40,7 @@ public static class DependencyInjection
         services.AddScoped<IContentStorageService, ContentStorageService>();
         services.AddScoped<IFacebookService, FacebookService>();
         services.AddScoped<ITikTokVideoService, TikTokVideoService>();
+        services.AddScoped<ITikTokPhotoService, TikTokPhotoService>();
         
         return services;
     }

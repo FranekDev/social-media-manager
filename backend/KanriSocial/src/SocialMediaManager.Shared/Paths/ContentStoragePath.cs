@@ -5,6 +5,7 @@ public static class ContentStoragePath
     public static class TikTok
     {
         public static string VideoPath => "TikTok/Videos/";
+        public static string PhotoPath => "TikTok/Photos/";
     }
 
     public static class Instagram

@@ -17,4 +17,5 @@ public class TikTokUser
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public IEnumerable<TikTokVideo> TikTokVideos { get; set; }
+    public IEnumerable<TikTokPhoto> TikTokPhotos { get; set; }
 }

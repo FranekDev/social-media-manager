@@ -101,6 +101,11 @@ public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options
             .HasOne(tu => tu.TikTokUser)
             .WithMany(tv => tv.TikTokVideos)
             .HasForeignKey(tv => tv.TikTokUserId);
+        
+        builder.Entity<TikTokPhoto>()
+            .HasOne(tu => tu.TikTokUser)
+            .WithMany(tv => tv.TikTokPhotos)
+            .HasForeignKey(tv => tv.TikTokUserId);
     }
     
     public DbSet<InstagramUser> InstagramUsers { get; set; }
@@ -111,4 +116,5 @@ public class KanriSocialDbContext(DbContextOptions<KanriSocialDbContext> options
     public DbSet<FacebookFeedPost> FacebookFeedPosts { get; set; }
     public DbSet<TikTokUser> TikTokUsers { get; set; }
     public DbSet<TikTokVideo> TikTokVideos { get; set; }
+    public DbSet<TikTokPhoto> TikTokPhotos { get; set; }
 }
