@@ -49,7 +49,7 @@ public class TikTokPhotoRepository(KanriSocialDbContext context) : ITikTokPhotoR
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TikTokPhoto>> GetUnpublished(Guid userId)
+    public async Task<IEnumerable<TikTokPhoto>> GetUnpublishedByUserId(Guid userId)
     {
         return await _context.TikTokPhotos
             .Where(x => x.TikTokUser.UserId == userId.ToString() && !x.IsPublished)

@@ -10,5 +10,5 @@ public interface ITikTokVideoRepository
     Task Update(TikTokVideo video);
     Task Delete(Guid id);
     Task<IEnumerable<TikTokVideo>> GetByTikTokUserId(Guid tikTokUserId);
-    Task<IEnumerable<TikTokVideo>> GetUnpublished(Guid userId);
+    Task<IEnumerable<TikTokVideo>> GetUnpublishedByUserId(Guid userId);
 }

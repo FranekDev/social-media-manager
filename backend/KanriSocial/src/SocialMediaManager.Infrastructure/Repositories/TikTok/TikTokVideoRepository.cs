@@ -49,7 +49,7 @@ public class TikTokVideoRepository(KanriSocialDbContext context) : ITikTokVideoR
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TikTokVideo>> GetUnpublished(Guid userId)
+    public async Task<IEnumerable<TikTokVideo>> GetUnpublishedByUserId(Guid userId)
     {
         return await _context.TikTokVideos
             .Where(x => x.TikTokUser.UserId == userId.ToString() && !x.IsPublished)

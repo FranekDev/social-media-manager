@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaManager.Application.Features.TikTok.Commands.CreateTikTokPhoto;
 using SocialMediaManager.Application.Features.TikTok.Commands.CreateTikTokVideo;
+using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledPhotos;
+using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledVideos;
 
 namespace SocialMediaManager.Api.Controllers.TikTok;
 
@@ -38,6 +40,42 @@ public class TikTokPostController(ISender sender) : ControllerBase
 
         var result = await _sender.Send(new CreateTikTokPhotoCommand(request.Title, request.Descriptiton, request.ImagesBytes, request.ScheduledAt, userId.Value));
         return Ok(new { PhotoId = result.Value});
+    }
+    
+    [HttpGet("videos/scheduled")]
+    public async Task<IActionResult> GetScheduledVideos()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetTikTokScheduledVideosQuery(userId.Value));
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        
+        return BadRequest(result.Errors);
+    }
+    
+    [HttpGet("photos/scheduled")]
+    public async Task<IActionResult> GetScheduledPhotos()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetTikTokScheduledPhotosQuery(userId.Value));
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        
+        return BadRequest(result.Errors);
     }
 
     private Guid? GetUserId()
