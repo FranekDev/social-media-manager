@@ -44,7 +44,7 @@ public class InstagramMediaService(
             InstagramUser = instagramUser,
             ImageUrl = post.ImageUrl,
             Caption = post.Caption,
-            ScheduledAt = post.ScheduledAt,
+            ScheduledAt = scheduledTimeUtc,
             IsPublished = false,
             ContainerId = mediaResult.Value.Id
         };

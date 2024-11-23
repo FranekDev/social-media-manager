@@ -1,12 +1,15 @@
-﻿using FluentResults;
+﻿using System.Security.Claims;
+using FluentResults;
 using SocialMediaManager.Application.Features.Instagram.User.Commands.CreateInstagramUser;
 using SocialMediaManager.Application.Features.Instagram.User.Queries.GetInstagramUser;
 using SocialMediaManager.Shared.Dtos.Instagram;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SocialMediaManager.Api.Controllers.Instagram;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class InstagramUserController(ISender sender) : ControllerBase
@@ -27,10 +30,16 @@ public class InstagramUserController(ISender sender) : ControllerBase
         }
     }
 
-    [HttpGet("{userId:Guid}")]
-    public async Task<ActionResult<Result<InstagramUserDetail>>> GetInstagramUserById([FromRoute] Guid userId)
+    [HttpGet]
+    public async Task<ActionResult<Result<InstagramUserDetail>>> GetInstagramUserById()
     {
-        var result = await _sender.Send(new GetInstagramUserByUserIdQuery(userId));
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+        
+        var result = await _sender.Send(new GetInstagramUserByUserIdQuery(userId.Value));
         
         if (result.IsFailed)
         {
@@ -38,5 +47,16 @@ public class InstagramUserController(ISender sender) : ControllerBase
         }
         
         return Ok(result.Value);
+    }
+    
+    private Guid? GetUserId()
+    {
+        var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (Guid.TryParse(userId, out var userIdGuid))
+        {
+            return userIdGuid;
+        }
+
+        return null;
     }
 }
