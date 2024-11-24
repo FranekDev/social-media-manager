@@ -49,8 +49,6 @@ export default function LoginPage() {
             });
 
             if (response?.ok) {
-                console.log("Login successful");
-                console.log(session);
                 router.push(callbackUrl);
             } else {
                 console.error("Login failed:", response?.error);
