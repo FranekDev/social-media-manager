@@ -1,14 +1,14 @@
 ﻿"use client";
 
-import { useSession } from "next-auth/react";
 import { ChevronUp, User2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function UserInfo() {
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     return (
         <>
-            <User2/>{ session?.user?.token?.username || "User" }
+            <User2/>{user?.username || "User"}
             <ChevronUp className="ml-auto"/>
         </>
     );

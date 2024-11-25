@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getInstagramUserMedia } from "@/features/instagram/api/get-instagram-user-media";
 import { InstagramMediaDetail } from "@/types/instagram/response/instagram-media-detail";
@@ -8,22 +7,23 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import Image from "next/image";
 import { getMediaTypeString, InstagramMediaType } from "@/types/instagram/enums/instagram-media-enums";
+import { useAuth } from "@/hooks/use-auth";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function PostsTable() {
-    const { data: session } = useSession();
+    const { token } = useAuth();
     const [igUserMedia, setIgUserMedia] = useState<InstagramMediaDetail[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (session) {
-            const fetchInsagramUserMedia = async () => {
-                const userMedia = await getInstagramUserMedia(session.user.token.token as string);
-                setIgUserMedia(userMedia);
-                setIsLoading(false);
-            }
-            fetchInsagramUserMedia();
+        const fetchInsagramUserMedia = async () => {
+            const userMedia = await getInstagramUserMedia(token);
+            setIgUserMedia(userMedia);
+            setIsLoading(false);
         }
-    }, [session]);
+        fetchInsagramUserMedia();
+    }, [token]);
 
     const columns: ColumnDef<InstagramMediaDetail>[] = [
         {
@@ -68,8 +68,23 @@ export default function PostsTable() {
         {
             accessorKey: "commentsCount",
             header: "Komentarze",
+        },
+        {
+            header: "Szczegóły",
+            cell: (info) => (
+                <Button
+                    // onClick={() => openDialog(info.row.original.id)}
+                    variant="ghost"
+                    className="rounded-full w-fit h-fit p-1 m-1"
+                >
+                    <Info size={48} color="grey" />
+                </Button>
+            ),
+
         }
     ];
 
-    return <DataTable columns={columns} data={igUserMedia} isLoading={isLoading} />;
+    return <DataTable columns={columns}
+                      data={igUserMedia}
+                      isLoading={isLoading}/>;
 }

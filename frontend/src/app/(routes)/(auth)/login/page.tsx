@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -35,8 +35,6 @@ export default function LoginPage() {
             password: "",
         },
     });
-
-    const { data: session, status } = useSession();
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);

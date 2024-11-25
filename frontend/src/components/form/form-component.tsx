@@ -11,7 +11,7 @@ export default function FormComponent<T extends FieldValues>(
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4">
+                  className="space-y-4 w-full">
                 {renderFields.map(({ fieldName, render }) => (
                     <FormField
                         render={({ field, fieldState, formState }) => render({ field, fieldState, formState })}
