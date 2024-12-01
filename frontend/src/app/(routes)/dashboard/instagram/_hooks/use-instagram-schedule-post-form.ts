@@ -67,27 +67,44 @@ export const useInstagramSchedulePostForm = (formType: InstagramFormType) => {
         },
     });
 
-    const onSubmit = async (data: PostFormValues) => {
+    const onSubmit = async (values: PostFormValues) => {
         try {
-            const date = new Date(data.scheduledAt);
+            const date = new Date(values.scheduledAt);
             const utcDate = date.toUTCString();
-            const fileBase64 = await getFileBytes(data.file as File);
+            const fileBase64 = await getFileBytes(values.file as File);
 
             let message: string | null = null;
             if (formType === "post") {
-                const response = await scheduleInstagramPost(token, {
+                const { data, errors } = await scheduleInstagramPost(token, {
                     imageBytes: fileBase64,
-                    caption: data.caption,
+                    caption: values.caption,
                     scheduledAt: new Date(utcDate).toISOString()
                 });
                 message = "Post został zaplanowany";
+
+                if (errors.length > 0) {
+                    errors.forEach(error => {
+                        toast({
+                            variant: "destructive",
+                            description: error.message
+                        });
+                    });
+                }
             } else if (formType === "reel") {
-                const response = await scheduleInstagramReel(token, {
+                const { data, errors } = await scheduleInstagramReel(token, {
                     videoBytes: fileBase64,
-                    caption: data.caption,
+                    caption: values.caption,
                     scheduledAt: new Date(utcDate).toISOString()
                 });
                 message = "Rolka została zaplanowana";
+                if (errors.length > 0) {
+                    errors.forEach(error => {
+                        toast({
+                            variant: "destructive",
+                            description: error.message
+                        });
+                    });
+                }
             }
 
             if (message != null) {

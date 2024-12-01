@@ -9,6 +9,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { NextUIProvider } from "@nextui-org/react";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -48,12 +49,14 @@ export default async function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
+        <TooltipProvider>
                         <AppSidebar/>
                         <SidebarTrigger/>
                         <main className="w-full">
                             {children}
                         </main>
                         <Toaster />
+        </TooltipProvider>
                     </ThemeProvider>
                 </Providers>
             </SidebarProvider>

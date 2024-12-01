@@ -1,4 +1,6 @@
-﻿import { Calendar, Facebook, Home, Instagram } from "lucide-react";
+﻿"use client";
+
+import { Calendar, Facebook, Home, Instagram } from "lucide-react";
 import {
     Sidebar,
     SidebarContent, SidebarFooter,
@@ -19,6 +21,8 @@ import SignOutButton from "@/components/auth/signout-button";
 import UserInfo from "@/components/auth/user-info";
 import TikTokIcon from "@/components/icons/tiktok-icon";
 import { ModeToggle } from "@/components/ModeToggle";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const items = [
     {
@@ -47,7 +51,7 @@ const platforms: Platform[] = [
     },
     {
         name: "Facebook",
-        url: "#",
+        url: "/dashboard/facebook",
         icon: <Facebook />,
     },
     {
@@ -58,6 +62,9 @@ const platforms: Platform[] = [
 ];
 
 export function AppSidebar() {
+
+    const currentPath = usePathname();
+
     return (
         <Sidebar>
             <SidebarContent>
@@ -68,10 +75,10 @@ export function AppSidebar() {
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                        <Link href={item.url} className={currentPath === item.url ? "active" : ""}>
                                             <item.icon/>
                                             <span>{item.title}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -85,10 +92,10 @@ export function AppSidebar() {
                             {platforms.map((platform) => (
                                 <SidebarMenuItem key={platform.name}>
                                     <SidebarMenuButton asChild>
-                                        <a href={platform.url}>
+                                        <Link href={platform.url} className={currentPath == platform.url ? "active" : ""}>
                                             {platform.icon}
                                             <span>{platform.name}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}

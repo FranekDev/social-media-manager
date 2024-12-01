@@ -3,17 +3,9 @@ import { Link2, UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InstagramUserDetail } from "@/types/instagram/response/instagram-user-detail";
 import { Skeleton } from "@/components/ui/skeleton";
+import UserDetail from "@/components/platforms/user-detail";
 
 export default function InstagramProfile({ user, isLoading }: { user: InstagramUserDetail | null, isLoading: boolean }) {
-    const formatNumber = (num: number) => {
-        if (num >= 1000000) {
-            return `${(num / 1000000).toFixed(1)}M`;
-        }
-        if (num >= 1000) {
-            return `${(num / 1000).toFixed(1)}K`;
-        }
-        return num.toString();
-    };
 
     return (
         <Card className="w-full max-w-2xl">
@@ -40,33 +32,17 @@ export default function InstagramProfile({ user, isLoading }: { user: InstagramU
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="flex flex-col">
-                        {isLoading ? (
-                            <Skeleton className="w-full h-4"/>
-                        ) : (
-                            <span className="font-bold">{user ? formatNumber(user.mediaCount) : ""}</span>
-                        )}
-                        <span className="text-sm text-muted-foreground">Posty</span>
-                    </div>
+                    <UserDetail value={user?.mediaCount}
+                                label="Posty"
+                                isLoading={isLoading} />
 
-                    <div className="flex flex-col">
-                        {isLoading ? (
-                            <Skeleton className="w-full h-4"/>
-                        ) : (
-                            <span className="font-bold">{user ? formatNumber(user.followersCount) : ""}</span>
-                        )}
-                        <span className="text-sm text-muted-foreground">Obserwujący</span>
-                    </div>
+                    <UserDetail value={user?.followersCount}
+                                label="Obserwujący"
+                                isLoading={isLoading} />
 
-                    <div className="flex flex-col">
-
-                        {isLoading ? (
-                            <Skeleton className="w-full h-4"/>
-                        ) : (
-                            <span className="font-bold">{user ? formatNumber(user.followsCount) : ""}</span>
-                        )}
-                        <span className="text-sm text-muted-foreground">Obserwowani</span>
-                    </div>
+                    <UserDetail value={user?.followsCount}
+                                label="Obserwowani"
+                                isLoading={isLoading} />
                 </div>
             </CardHeader>
 

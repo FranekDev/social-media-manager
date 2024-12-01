@@ -19,6 +19,9 @@ type InstagramEndpoints = {
     scheduleReel: ApiEndpoint;
     insights: ApiEndpoint;
     getUser: ApiEndpoint;
+    getComments: (mediaId: string) => ApiEndpoint;
+    getCommentReplies: (commentId: string) => ApiEndpoint;
+    postCommentReply: (commentId: string) => ApiEndpoint;
 };
 
 type ApiStructure = {
@@ -62,5 +65,17 @@ export const API_PATHS: ApiStructure = {
             url: `${BASE_URL}/InstagramUser`,
             method: 'GET',
         },
+        getComments: (mediaId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/InstagramComment/${mediaId}/comments`,
+            method: "GET"
+        }),
+        getCommentReplies: (commentId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/InstagramComment/${commentId}/replies`,
+            method: "GET"
+        }),
+        postCommentReply: (commentId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/InstagramComment/${commentId}/replies`,
+            method: "POST"
+        }),
     }
 } as const;

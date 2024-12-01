@@ -18,6 +18,7 @@ import {
 import PostsTable from "@/app/(routes)/dashboard/instagram/_components/posts-table";
 import ScheduleContent from "@/app/(routes)/dashboard/instagram/_components/schedule-content";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function InstagramPage() {
 
@@ -37,13 +38,25 @@ export default function InstagramPage() {
     const { token } = useAuth();
     const [igUserDetail, setIgUserDetail] = useState<InstagramUserDetail | null>(null);
     const [isUserLoading, setIsUserLoading] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
         if (token) {
             const fetchInstagramUser = async () => {
-                const userDetail = await getInstagramUser(token);
-                setIgUserDetail(userDetail);
+                const { data, errors } = await getInstagramUser(token);
+
+                if (errors.length > 0) {
+                    errors.forEach(error => {
+                        toast({
+                            variant: "destructive",
+                            description: error.message
+                        });
+                    });
+                }
+
+                setIgUserDetail(data);
                 setIsUserLoading(false);
+
             };
             fetchInstagramUser();
         }

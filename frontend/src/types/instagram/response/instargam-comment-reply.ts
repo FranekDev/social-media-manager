@@ -1,0 +1,3 @@
+﻿type InstagramCommentReply = {
+    id: string
+};

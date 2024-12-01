@@ -15,6 +15,7 @@ import { getLocalTimeZone, now, today } from "@internationalized/date";
 import FormComponent from "@/components/form/form-component";
 import { z } from "zod";
 import PreviewContent from "@/app/(routes)/dashboard/instagram/_components/preview-content";
+import { useToast } from "@/hooks/use-toast";
 
 type ScheduleContentProps = {
     type: InstagramFormType;
@@ -22,6 +23,7 @@ type ScheduleContentProps = {
 
 export default function ScheduleContent({ type }: ScheduleContentProps) {
     const { schema, form, onSubmit } = useInstagramSchedulePostForm(type);
+    const { toast } = useToast();
 
     type PostFormValues = z.infer<typeof schema>;
     const [previewData, setPreviewData] = useState<PostFormValues>({
@@ -75,7 +77,7 @@ export default function ScheduleContent({ type }: ScheduleContentProps) {
                             <Input
                                 id="video"
                                 type="file"
-                                accept="video/mp4,video/quicktime,video/avi"
+                                accept="video/mp4"
                                 {...fieldProps}
                                 onChange={(event) => {
                                     const file = event.target.files && event.target.files[0];

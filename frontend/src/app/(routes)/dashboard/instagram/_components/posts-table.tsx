@@ -8,18 +8,34 @@ import { DataTable } from "@/components/data-table";
 import Image from "next/image";
 import { getMediaTypeString, InstagramMediaType } from "@/types/instagram/enums/instagram-media-enums";
 import { useAuth } from "@/hooks/use-auth";
-import { Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import CommentsList from "@/app/(routes)/dashboard/instagram/_components/comments-list";
+import { getInstagramPostComments } from "@/features/instagram/api/get-instagram-post-comments";
+import InstagramMediaInsights from "@/app/(routes)/dashboard/instagram/_components/instagram-media-insights";
+import { InstagramMediaInsightType } from "@/types/instagram/enums/instagram-media-insight-type";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PostsTable() {
     const { token } = useAuth();
     const [igUserMedia, setIgUserMedia] = useState<InstagramMediaDetail[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const {toast} = useToast();
 
     useEffect(() => {
         const fetchInsagramUserMedia = async () => {
-            const userMedia = await getInstagramUserMedia(token);
-            setIgUserMedia(userMedia);
+            const { data, errors } = await getInstagramUserMedia(token);
+
+            if (errors.length > 0) {
+                errors.forEach(error => {
+                    toast({
+                        variant: "destructive",
+                        description: error.message
+                    });
+                });
+
+            }
+            else {
+                setIgUserMedia((data ?? []) as InstagramMediaDetail[]);
+            }
             setIsLoading(false);
         }
         fetchInsagramUserMedia();
@@ -68,17 +84,31 @@ export default function PostsTable() {
         {
             accessorKey: "commentsCount",
             header: "Komentarze",
+            cell: (info) => (<>
+                <div className="flex justify-start items-center">
+                    <p>{info.row.original.commentsCount}</p>
+                    <CommentsList itemId={info.row.original.id}
+                                  parent={"media"}
+                                  title="Komentarze użytkowników"
+                                  description="Tutaj możesz zobaczyć komentarze, które użytkownicy zostawili pod Twoim postem."
+                                  fetchCommentsAction={async () =>  await getInstagramPostComments(token, info.row.original.id)}/>
+                </div>
+            </>),
         },
         {
             header: "Szczegóły",
             cell: (info) => (
-                <Button
+                // <Button
                     // onClick={() => openDialog(info.row.original.id)}
-                    variant="ghost"
-                    className="rounded-full w-fit h-fit p-1 m-1"
-                >
-                    <Info size={48} color="grey" />
-                </Button>
+                    // variant="ghost"
+                    // className="rounded-full w-fit h-fit p-1 m-1"
+                // >
+                //     <Info size={48} color="grey" />
+                // </Button>
+                <InstagramMediaInsights mediaId={info.row.original.id}
+                                        insightType={info.row.original.mediaType === InstagramMediaType.Video
+                                            ? InstagramMediaInsightType.REEL
+                                            : InstagramMediaInsightType.POST} />
             ),
 
         }
