@@ -45,4 +45,7 @@ public interface IFacebookClient
     /// <param name="accessToken">The access token for authenticating the request.</param>
     /// <returns>The task result contains a Result object wrapping a FacebookPagePostCommentData.</returns>
     Task<Result<FacebookPagePostCommentData?>> GetPostComments(string postId, string accessToken);
+
+    Task<Result<FacebookData<FacebookPagePicture>?>> GetPagePicture(string pageId, string accessToken);
+    Task<Result<FacebookNewComment?>> CreatePagePostComment(string pagePostId, string message, string accessToken);
 }

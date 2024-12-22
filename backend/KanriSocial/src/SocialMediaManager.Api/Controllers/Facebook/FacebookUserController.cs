@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentResults;
-using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaManager.Application.Features.Facebook.Page.Commands.CreateFacebookPagePost;
+using SocialMediaManager.Application.Features.Facebook.Page.Commands.CreatePagePostComment;
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPageData;
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPagePostComments;
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPagePublishedPosts;
@@ -147,6 +146,24 @@ public class FacebookUserController(ISender sender) : ControllerBase
         
         var response = await _sender.Send(new GetFacebookScheduledPostsQuery(userId.Value));
         return Ok(response);
+    }
+    
+    [HttpPost("comment")]
+    public async Task<ActionResult<Result<FacebookNewComment>>> CreatePagePostComment([FromBody] CreatePagePostCommentRequest request)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Błędny user id");
+        }
+        
+        var response = await _sender.Send(new CreatePagePostCommentCommand(request.PagePostId, request.PostCommentId, request.Message, userId.Value));
+        if (response.IsFailed)
+        {
+            return BadRequest(response.Errors);
+        }
+        
+        return Ok(response.Value);
     }
 
     private Guid? GetUserId()

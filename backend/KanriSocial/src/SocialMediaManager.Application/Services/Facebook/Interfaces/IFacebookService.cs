@@ -13,4 +13,5 @@ public interface IFacebookService
     Task<Result<IEnumerable<FacebookPublishedPost>>> GetPublishedPosts(string pageId, string pageAccessToken);
     Task<Result<string>> GetPageAccessToken(FacebookUser user, string pageId);
     Task<Result<IEnumerable<FacebookPagePostComment>>> GetPostComments(string postId, string accessToken);
+    Task<Result<IEnumerable<FacebookUserPage>>> GetUserPages(FacebookUser user);
 }

@@ -100,4 +100,16 @@ public class FacebookClient(IHttpClientFactory httpClientFactory, IConfiguration
 
         return await GetFromApiWithFailMessage<FacebookData<FacebookPagePicture>>(uri, "Nie udało się pobrać zdjęcia strony.");
     }
+
+    public async Task<Result<FacebookNewComment?>> CreatePagePostComment(string pagePostId, string message, string accessToken)
+    {
+        var uri = BuildUri($"{pagePostId}/comments", null);
+        var content = new StringContent(JsonConvert.SerializeObject(new
+        {
+            message, 
+            access_token = accessToken
+        }), Encoding.UTF8, "application/json");
+        
+        return await PostToApiWithFailMessage<FacebookNewComment>(uri, content, "Nie udało się dodać komentarza do posta.");
+    }
 }
