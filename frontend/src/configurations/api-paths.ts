@@ -22,11 +22,23 @@ type InstagramEndpoints = {
     getComments: (mediaId: string) => ApiEndpoint;
     getCommentReplies: (commentId: string) => ApiEndpoint;
     postCommentReply: (commentId: string) => ApiEndpoint;
+    getScheduledPosts: ApiEndpoint;
+    getScheduledReels: ApiEndpoint;
+};
+
+type FacebookEndpoints = {
+    getUserPages: ApiEndpoint;
+    pageData: (pageId: string) => ApiEndpoint;
+    getPublishedPosts: (pageId: string) => ApiEndpoint;
+    getPagePostComments: (pageId: string, postId: string) => ApiEndpoint;
+    schedulePost: ApiEndpoint;
+    getScheduledPosts: ApiEndpoint;
 };
 
 type ApiStructure = {
     user: UserEndpoints;
     instagram: InstagramEndpoints;
+    facebook: FacebookEndpoints;
 }
 
 export const API_PATHS: ApiStructure = {
@@ -77,5 +89,39 @@ export const API_PATHS: ApiStructure = {
             url: `${BASE_URL}/InstagramComment/${commentId}/replies`,
             method: "POST"
         }),
+        getScheduledPosts: {
+            url: `${BASE_URL}/InstagramMedia/unpublished`,
+            method: "GET"
+        },
+        getScheduledReels: {
+            url: `${BASE_URL}/InstagramMedia/unpublished/reels`,
+            method: "GET"
+        }
+    },
+    facebook: {
+        getUserPages: {
+            url: `${BASE_URL}/FacebookUser/pages`,
+            method: "GET"
+        },
+        pageData: (pageId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/FacebookUser/${pageId}`,
+            method: "GET"
+        }),
+        getPublishedPosts: (pageId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/FacebookUser/${pageId}/published-posts`,
+            method: "GET"
+        }),
+        getPagePostComments: (pageId: string, postId: string): ApiEndpoint => ({
+            url: `${BASE_URL}/FacebookUser/${pageId}/${postId}/comments`,
+            method: "POST"
+        }),
+        schedulePost: {
+            url: `${BASE_URL}/FacebookUser/post`,
+            method: "POST"
+        },
+        getScheduledPosts: {
+            url: `${BASE_URL}/FacebookUser/scheduled`,
+            method: "GET"
+        }
     }
 } as const;

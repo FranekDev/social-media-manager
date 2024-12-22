@@ -82,7 +82,7 @@ export default function InstagramPage() {
                                 Zaplanuj publikację postu lub rolki na Instagramie.
                             </DialogDescription>
                         </DialogHeader>
-                        <TabsView tabs={tabs}/>
+                        <TabsView tabs={tabs} isLoading={false}/>
                     </DialogContent>
                 </Dialog>
 

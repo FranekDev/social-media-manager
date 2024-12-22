@@ -32,7 +32,7 @@ const items = [
     },
     {
         title: "Publikacje",
-        url: "#",
+        url: "/scheduled",
         icon: Calendar,
     }
 ];

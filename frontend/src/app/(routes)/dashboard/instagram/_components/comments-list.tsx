@@ -74,15 +74,9 @@ export default function CommentsList({ parent, title, description, itemId, fetch
             {
                 header: "Odpowiedzi",
                 cell: (info) => {
-                    // getInstagramCommentReplies(token, info.row.original.id)
-                    //     .then(replies => setRepliesCount(replies.data?.length ?? 0));
-
                     const commentId = info.row.original.id;
-                    getInstagramCommentReplies(token, commentId)
-                        .then(replies => setRepliesCount(replies.data?.length ?? 0));
-                    console.log(commentId);
                     return <>
-                        {repliesCount}
+                        {replyCountMap[commentId] ?? 0}
                         <CommentsList parent="comment"
                                       title="Odpowiedzi na komentarz"
                                       description={<>
