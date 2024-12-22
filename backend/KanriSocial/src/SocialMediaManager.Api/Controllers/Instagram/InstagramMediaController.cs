@@ -10,6 +10,7 @@ using SocialMediaManager.Application.Features.Instagram.Media.Commands.CreateIns
 using SocialMediaManager.Application.Features.Instagram.Media.Queries.GetInstagramMediaInsight;
 using SocialMediaManager.Application.Features.Instagram.Media.Queries.GetInstagramUserPosts;
 using SocialMediaManager.Application.Features.Instagram.Media.Queries.GetUnpublishedPosts;
+using SocialMediaManager.Application.Features.Instagram.Media.Queries.GetUnpublishedReels;
 
 namespace SocialMediaManager.Api.Controllers.Instagram;
 
@@ -107,7 +108,7 @@ public class InstagramMediaController(ISender sender) : ControllerBase
     [HttpPost("insights")]
     public async Task<ActionResult<Result<InstagramMediaInsightsData>>> GetInstagramMediaInsight(
         [FromBody] GetInstagramMediaInsightRequest request)
-{
+    {
         var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(userId, out var userIdGuid))
         {
@@ -121,5 +122,19 @@ public class InstagramMediaController(ISender sender) : ControllerBase
         }
         
         return Ok(result.Value);
+    }
+    
+    [HttpGet("unpublished/reels")]
+    public async Task<ActionResult<IEnumerable<InstagramReelDto>>> GetUnpublishedReels()
+    {
+        var userId = User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(userId, out var userIdGuid))
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetUnpublishedReelsQuery(userIdGuid));
+        return Ok(result);
     }
 }

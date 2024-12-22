@@ -47,6 +47,8 @@ public class InstagramReelRepository(KanriSocialDbContext context, IMapper mappe
 
     public async Task<IEnumerable<InstagramReel>> GetUnpublishedReels(Guid userId)
     {
-        throw new NotImplementedException();
+        return await _context.InstagramReels
+            .Where(x => x.InstagramUser.UserId == userId.ToString() && !x.IsPublished)
+            .ToListAsync();
     }
 }

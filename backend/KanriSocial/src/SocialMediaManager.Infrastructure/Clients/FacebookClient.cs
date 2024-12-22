@@ -87,4 +87,17 @@ public class FacebookClient(IHttpClientFactory httpClientFactory, IConfiguration
         var uri = BuildUri($"{postId}/comments", queryParams);
         return await GetFromApiWithFailMessage<FacebookPagePostCommentData>(uri, "Failed to retrieve Facebook post comments.");
     }
+
+    public async Task<Result<FacebookData<FacebookPagePicture>?>> GetPagePicture(string pageId, string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["redirect"] = 0.ToString(),
+            ["access_token"] = accessToken
+        };
+
+        var uri = BuildUri($"{pageId}/picture", queryParams);
+
+        return await GetFromApiWithFailMessage<FacebookData<FacebookPagePicture>>(uri, "Nie udało się pobrać zdjęcia strony.");
+    }
 }

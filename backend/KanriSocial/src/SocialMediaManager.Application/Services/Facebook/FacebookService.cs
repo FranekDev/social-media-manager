@@ -103,7 +103,7 @@ public class FacebookService(
             return Result.Fail(accountDataResult.Errors);
         }
         
-        var pageAccessToken = accountDataResult?.Value?.FirstOrDefault(x => x.Id == pageId)?.AccessToken;
+        var pageAccessToken = accountDataResult?.Value?.FirstOrDefault(x => x.Id == pageId.Split("_").First())?.AccessToken;
         if (pageAccessToken is null)
         {
             return Result.Fail("Page access token not found");
@@ -132,5 +132,42 @@ public class FacebookService(
         }
         
         return Result.Ok(postCommentsResult?.Value?.Data ?? []);
+    }
+
+    public async Task<Result<IEnumerable<FacebookUserPage>>> GetUserPages(FacebookUser user)
+    {
+        var pages = await _facebookClient.GetAccountData(user.AccountId, user.Token);
+
+        if (pages.IsFailed || pages.Value is null)
+        {
+            return Result.Fail("Nie udało się pobrać danych konta");
+        }
+
+        return Result.Ok(await MapToPages(pages.Value, user));
+    }
+    
+    private async Task<IEnumerable<FacebookUserPage>> MapToPages(FacebookAccountResponse response, FacebookUser user)
+    {
+        var pageTasks = response.Data.Select(x => CreateFacebookPage(x, user));
+        return await Task.WhenAll(pageTasks);
+    }
+
+    private async Task<FacebookUserPage> CreateFacebookPage(FacebookAccountData x, FacebookUser user)
+    {
+        return new FacebookUserPage
+        {
+            Category = x.Category,
+            CategoryList = x.CategoryList,
+            Name = x.Name,
+            PageId = x.Id,
+            Tasks = x.Tasks,
+            PagePicture = await GetPagePicture(x.Id, user.Token)
+        };
+    }
+
+    private async Task<FacebookPagePicture?> GetPagePicture(string pageId, string accessToken)
+    {
+        var result = await _facebookClient.GetPagePicture(pageId, accessToken);
+        return result.IsFailed ? null : result.Value?.Data;
     }
 }

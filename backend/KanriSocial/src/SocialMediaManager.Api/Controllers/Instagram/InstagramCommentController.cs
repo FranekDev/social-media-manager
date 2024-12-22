@@ -5,10 +5,12 @@ using SocialMediaManager.Application.Features.Instagram.Comment.Queries.GetInsta
 using SocialMediaManager.Application.Features.Instagram.Comment.Queries.GetInstagramPostComments;
 using SocialMediaManager.Shared.Dtos.Instagram;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SocialMediaManager.Api.Controllers.Instagram;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class InstagramCommentController(ISender sender) : ControllerBase

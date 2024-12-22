@@ -9,6 +9,6 @@ public class CreateCommentReplyCommandValidator : AbstractValidator<CreateCommen
         RuleFor(p => p.Message)
             .NotEmpty().WithMessage("Message is required.")
             .NotNull()
-            .MaximumLength(22000).WithMessage("Message must not exceed 2200 characters.");
+            .MaximumLength(2200).WithMessage("Message must not exceed 2200 characters.");
     }
 }

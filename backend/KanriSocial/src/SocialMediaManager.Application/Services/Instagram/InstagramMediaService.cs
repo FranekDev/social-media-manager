@@ -85,7 +85,7 @@ public class InstagramMediaService(
         
         var mediaData = new List<InstagramMediaDetail>();
         
-        var paginatedMedia = userDetail.Value.Media.Data.Skip(pageNumber * pageSize).Take(pageSize);
+        var paginatedMedia = userDetail.Value.Media.Data.Skip((pageNumber - 1) * pageSize).Take(pageSize);
         
         foreach (var media in paginatedMedia)
         {

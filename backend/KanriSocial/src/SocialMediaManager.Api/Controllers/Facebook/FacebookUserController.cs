@@ -9,6 +9,8 @@ using SocialMediaManager.Application.Features.Facebook.Page.Commands.CreateFaceb
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPageData;
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPagePostComments;
 using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookPagePublishedPosts;
+using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookScheduledPosts;
+using SocialMediaManager.Application.Features.Facebook.Page.Queries.GetFacebookUserPages;
 using SocialMediaManager.Application.Features.Facebook.User.Commands.CreateFacebookUser;
 using SocialMediaManager.Shared.Dtos.Facebook;
 
@@ -59,7 +61,7 @@ public class FacebookUserController(ISender sender) : ControllerBase
         return Ok(response.Value);
     }
     
-    [HttpPost("/post")] 
+    [HttpPost("post")] 
     public async Task<IActionResult> PublishPagePost([FromBody] CreateFacebookPagePostRequest request)
     {
         var userId = GetUserId();
@@ -113,6 +115,38 @@ public class FacebookUserController(ISender sender) : ControllerBase
         }
         
         return Ok(response.Value);
+    }
+
+    [HttpGet("pages")]
+    public async Task<ActionResult<Result<IEnumerable<FacebookUserPage>>>> GetUserPages()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Błędny user id");
+        }
+
+        var response = await _sender.Send(new GetFacebookUserPagesQuery(userId.Value));
+
+        if (response.IsFailed)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
+    
+    [HttpGet("scheduled")]
+    public async Task<ActionResult<Result<IEnumerable<FacebookFeedPostDto>>>> GetScheduledPosts()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Błędny user id");
+        }
+        
+        var response = await _sender.Send(new GetFacebookScheduledPostsQuery(userId.Value));
+        return Ok(response);
     }
 
     private Guid? GetUserId()
