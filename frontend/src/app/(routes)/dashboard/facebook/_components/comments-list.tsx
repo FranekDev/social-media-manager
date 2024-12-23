@@ -17,6 +17,7 @@ import { DataTable } from "@/components/data-table";
 import { ApiResponse } from "@/types/api/api-response";
 import { FacebookPagePostComment } from "@/types/facebook/facebook-page-post-comment";
 import { parseDateToLocale } from "@/lib/utils";
+import AnswerComment from "@/app/(routes)/dashboard/facebook/_components/answer-comment";
 
 type CommentsListProps = {
     title: string;
@@ -42,7 +43,6 @@ export default function CommentsList({ title, description, postId, fetchComments
         console.log("fetch");
         const { data, errors } = await fetchCommentsAction();
 
-        // const data = [];
         if (data != null) {
             setFbPagePostComments(data);
             setReplyCountMap(prev => ({
@@ -65,47 +65,21 @@ export default function CommentsList({ title, description, postId, fetchComments
             header: "Data publikacji",
             cell: (info) => parseDateToLocale(info.row.original.createdTime)
         },
+        {
+            header: "Odpowiedz",
+            cell: (info) => {
+                return <AnswerComment pagePostId={postId}
+                                      comment={info.row.original.message}
+                                      commentId={info.row.original.id} />;
+            },
+        }
     ];
-
-
-    // if (parent === "media") {
-    //     columns.push(
-    //         {
-    //             header: "Odpowiedzi",
-    //             cell: (info) => {
-    //
-    //                 // const commentId = info.row.original.id;
-    //                 // getFacebookPagePostComments(token, "", commentId)
-    //                 //     .then(replies => setRepliesCount(replies.data?.length ?? 0));
-    //                 // console.log(commentId);
-    //                 return <>
-    //                     {repliesCount}
-    //                     {/*<CommentsList parent="comment"*/}
-    //                     {/*              title="Odpowiedzi na komentarz"*/}
-    //                     {/*              description={<>*/}
-    //                     {/*                  {"Komentarz:"}<br/>*/}
-    //                     {/*                  {info.row.original.text}*/}
-    //                     {/*              </>}*/}
-    //                     {/*              itemId={commentId}*/}
-    //                     {/*              fetchCommentsAction={async () => await getInstagramCommentReplies(token, commentId)}/>*/}
-    //                 </>;
-    //             },
-    //         },
-    //         {
-    //             header: "Odpowiedz",
-    //             cell: (info) => {
-    //                 return <AnswerCommentDialog comment={info.row.original.message}
-    //                                             commentId={info.row.original.id}
-    //                                             updateCommentsCountAction={fetchFacebookPagePostComments}/>;
-    //             },
-    //         }
-    //     );
-    // }
 
     return (
         <Dialog onOpenChange={open => {
             if (open) {
                 fetchFacebookPagePostComments();
+            // createPagepostComment(token, { message: "test add comment", pagePostId: postId });
             }
         }}>
             <DialogTrigger asChild>

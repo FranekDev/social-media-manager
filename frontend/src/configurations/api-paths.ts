@@ -33,6 +33,7 @@ type FacebookEndpoints = {
     getPagePostComments: (pageId: string, postId: string) => ApiEndpoint;
     schedulePost: ApiEndpoint;
     getScheduledPosts: ApiEndpoint;
+    createPagePostComment: ApiEndpoint;
 };
 
 type ApiStructure = {
@@ -122,6 +123,10 @@ export const API_PATHS: ApiStructure = {
         getScheduledPosts: {
             url: `${BASE_URL}/FacebookUser/scheduled`,
             method: "GET"
-        }
+        },
+        createPagePostComment: {
+            url: `${BASE_URL}/FacebookUser/comment`,
+            method: "POST"
+        },
     }
 } as const;

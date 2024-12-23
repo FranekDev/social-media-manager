@@ -31,7 +31,6 @@ export default function FacebookUserPages() {
     useEffect(() => {
         const fetchFbUserPages = async () => {
             const { data, errors } = await getFacebookUserPages(token);
-            console.log(data);
 
             if (errors.length > 0) {
                 errors.forEach(error => {
