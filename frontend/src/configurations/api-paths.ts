@@ -36,10 +36,19 @@ type FacebookEndpoints = {
     createPagePostComment: ApiEndpoint;
 };
 
+type TikTokEndpoints = {
+    getUser: ApiEndpoint;
+    getPublishedPhotos: ApiEndpoint;
+    getPublishedVideos: ApiEndpoint;
+    getScheduledPhotos: ApiEndpoint;
+    getSchduledVideos: ApiEndpoint;
+};
+
 type ApiStructure = {
     user: UserEndpoints;
     instagram: InstagramEndpoints;
     facebook: FacebookEndpoints;
+    tiktok: TikTokEndpoints;
 }
 
 export const API_PATHS: ApiStructure = {
@@ -127,6 +136,28 @@ export const API_PATHS: ApiStructure = {
         createPagePostComment: {
             url: `${BASE_URL}/FacebookUser/comment`,
             method: "POST"
+        },
+    },
+    tiktok: {
+        getUser: {
+            url: `${BASE_URL}/TikTokUser/info`,
+            method: "GET"
+        },
+        getPublishedPhotos: {
+            url: `${BASE_URL}/TikTokPost/photos/published`,
+            method: "GET"
+        },
+        getPublishedVideos: {
+            url: `${BASE_URL}/TikTokPost/videos/published`,
+            method: "GET"
+        },
+        getScheduledPhotos: {
+            url: `${BASE_URL}/TikTokPost/photos/scheduled`,
+            method: "GET"
+        },
+        getSchduledVideos: {
+            url: `${BASE_URL}/TikTokPost/videos/scheduled`,
+            method: "GET"
         },
     }
 } as const;

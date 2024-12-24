@@ -56,7 +56,7 @@ const platforms: Platform[] = [
     },
     {
         name: "TikTok",
-        url: "#",
+        url: "/dashboard/tiktok",
         icon: <TikTokIcon />,
     }
 ];
