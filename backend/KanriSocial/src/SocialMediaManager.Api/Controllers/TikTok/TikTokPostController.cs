@@ -1,11 +1,15 @@
 ﻿using System.Security.Claims;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaManager.Application.Features.TikTok.Commands.CreateTikTokPhoto;
 using SocialMediaManager.Application.Features.TikTok.Commands.CreateTikTokVideo;
+using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokPublishedPhotos;
+using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokPublishedVideos;
 using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledPhotos;
 using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledVideos;
+using SocialMediaManager.Shared.Dtos.TikTok;
 
 namespace SocialMediaManager.Api.Controllers.TikTok;
 
@@ -76,6 +80,42 @@ public class TikTokPostController(ISender sender) : ControllerBase
         }
         
         return BadRequest(result.Errors);
+    }
+    
+    [HttpGet("photos/published")]
+    public async Task<ActionResult<Result<IEnumerable<TikTokPhotoDto>>>> GetPublishedPhotos()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetTikTokPublishedPhotosQuery(userId.Value));
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(result.Value);
+    }
+    
+    [HttpGet("videos/published")]
+    public async Task<ActionResult<Result<IEnumerable<TikTokVideoDto>>>> GetPublishedVideos()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetTikTokPublishedVideosQuery(userId.Value));
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(result.Value);
     }
 
     private Guid? GetUserId()

@@ -1,4 +1,5 @@
 ﻿using SocialMediaManager.Domain.Models.TikTok;
+using SocialMediaManager.Shared.Dtos.TikTok;
 
 namespace SocialMediaManager.Infrastructure.Repositories.TikTok.Interfaces;
 
@@ -11,4 +12,5 @@ public interface ITikTokVideoRepository
     Task Delete(Guid id);
     Task<IEnumerable<TikTokVideo>> GetByTikTokUserId(Guid tikTokUserId);
     Task<IEnumerable<TikTokVideo>> GetUnpublishedByUserId(Guid userId);
+    Task<IEnumerable<TikTokVideo>> GetPublishedByUserId(Guid userId);
 }

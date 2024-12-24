@@ -11,4 +11,5 @@ public interface ITikTokPhotoRepository
     Task Delete(Guid id);
     Task<IEnumerable<TikTokPhoto>> GetByTikTokUserId(Guid tikTokUserId);
     Task<IEnumerable<TikTokPhoto>> GetUnpublishedByUserId(Guid userId);
+    Task<IEnumerable<TikTokPhoto>> GetPublishedByUserId(Guid userId);
 }

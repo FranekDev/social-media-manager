@@ -55,4 +55,11 @@ public class TikTokPhotoRepository(KanriSocialDbContext context) : ITikTokPhotoR
             .Where(x => x.TikTokUser.UserId == userId.ToString() && !x.IsPublished)
             .ToListAsync();             
     }
+    
+    public async Task<IEnumerable<TikTokPhoto>> GetPublishedByUserId(Guid userId)
+    {
+        return await _context.TikTokPhotos
+            .Where(x => x.TikTokUser.UserId == userId.ToString() && x.IsPublished)
+            .ToListAsync();             
+    }
 }
