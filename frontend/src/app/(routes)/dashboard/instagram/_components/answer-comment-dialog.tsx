@@ -67,7 +67,7 @@ export default function AnswerCommentDialog({ updateCommentsCountAction, comment
                 errors.forEach(error => {
                     toast({
                         variant: "destructive",
-                        description: error.message
+                        description: error.errorMessage
                     });
                 });
             }

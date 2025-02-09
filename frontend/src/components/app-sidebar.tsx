@@ -26,7 +26,7 @@ import { usePathname } from "next/navigation";
 
 const items = [
     {
-        title: "Home",
+        title: "Start",
         url: "/",
         icon: Home,
     },
@@ -65,6 +65,10 @@ export function AppSidebar() {
 
     const currentPath = usePathname();
 
+    if (currentPath.includes("login") || currentPath.includes("register")) {
+        return null;
+    }
+
     return (
         <Sidebar>
             <SidebarContent>
@@ -75,7 +79,7 @@ export function AppSidebar() {
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={item.url} className={currentPath === item.url ? "active" : ""}>
+                                        <Link href={item.url} className={currentPath == item.url ? "bg-zinc-800" : ""}>
                                             <item.icon/>
                                             <span>{item.title}</span>
                                         </Link>
@@ -92,7 +96,7 @@ export function AppSidebar() {
                             {platforms.map((platform) => (
                                 <SidebarMenuItem key={platform.name}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={platform.url} className={currentPath == platform.url ? "active" : ""}>
+                                        <Link id={platform.name} href={platform.url} className={currentPath == platform.url ? "bg-zinc-800" : ""}>
                                             {platform.icon}
                                             <span>{platform.name}</span>
                                         </Link>

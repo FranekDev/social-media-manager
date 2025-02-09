@@ -42,6 +42,9 @@ type TikTokEndpoints = {
     getPublishedVideos: ApiEndpoint;
     getScheduledPhotos: ApiEndpoint;
     getSchduledVideos: ApiEndpoint;
+    schedulePhoto: ApiEndpoint;
+    scheduleVideo: ApiEndpoint;
+    getPostsStats: ApiEndpoint;
 };
 
 type ApiStructure = {
@@ -52,16 +55,6 @@ type ApiStructure = {
 }
 
 export const API_PATHS: ApiStructure = {
-    user: {
-        login: {
-            url: `${BASE_URL}/Account/login`,
-            method: 'POST',
-        },
-        register: {
-            url: `${BASE_URL}/Account/register`,
-            method: 'POST',
-        },
-    },
     instagram: {
         schedulePost: {
             url: `${BASE_URL}/InstagramMedia`,
@@ -69,10 +62,6 @@ export const API_PATHS: ApiStructure = {
         },
         getPosts: {
             url: `${BASE_URL}/InstagramMedia`,
-            method: 'GET',
-        },
-        unpublished: {
-            url: `${BASE_URL}/InstagramMedia/unpublished`,
             method: 'GET',
         },
         scheduleReel: {
@@ -83,6 +72,11 @@ export const API_PATHS: ApiStructure = {
             url: `${BASE_URL}/InstagramMedia/insights`,
             method: 'POST',
         },
+        unpublished: {
+            url: `${BASE_URL}/InstagramMedia/unpublished`,
+            method: 'GET',
+        },
+
         getUser: {
             url: `${BASE_URL}/InstagramUser`,
             method: 'GET',
@@ -107,6 +101,16 @@ export const API_PATHS: ApiStructure = {
             url: `${BASE_URL}/InstagramMedia/unpublished/reels`,
             method: "GET"
         }
+    },
+    user: {
+        login: {
+            url: `${BASE_URL}/Account/login`,
+            method: 'POST',
+        },
+        register: {
+            url: `${BASE_URL}/Account/register`,
+            method: 'POST',
+        },
     },
     facebook: {
         getUserPages: {
@@ -157,6 +161,18 @@ export const API_PATHS: ApiStructure = {
         },
         getSchduledVideos: {
             url: `${BASE_URL}/TikTokPost/videos/scheduled`,
+            method: "GET"
+        },
+        schedulePhoto: {
+            url: `${BASE_URL}/TikTokPost/photos`,
+            method: "POST"
+        },
+        scheduleVideo: {
+            url: `${BASE_URL}/TikTokPost/videos`,
+            method: "POST"
+        },
+        getPostsStats: {
+            url: `${BASE_URL}/TikTokPost/videos/stats`,
             method: "GET"
         },
     }

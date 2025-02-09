@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import SchedulePost from "@/app/(routes)/dashboard/facebook/_components/schedule-post";
+import ConnectFacebookAccount from "@/app/(routes)/dashboard/facebook/_components/connect-facebook-account";
 
 export default function FacebookUserPages() {
 
@@ -36,7 +37,7 @@ export default function FacebookUserPages() {
                 errors.forEach(error => {
                     toast({
                         variant: "destructive",
-                        description: error.message
+                        description: error.errorMessage
                     });
                 });
                 return;
@@ -83,5 +84,5 @@ export default function FacebookUserPages() {
         fetchFbUserPages();
     }, [token]);
 
-    return <TabsView tabs={tabs} isLoading={isLoading} />;
+    return fbUserPage.length == 0 ? <ConnectFacebookAccount /> : <TabsView tabs={tabs} isLoading={isLoading} />;
 }

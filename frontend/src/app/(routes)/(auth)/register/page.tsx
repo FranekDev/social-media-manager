@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -7,25 +7,27 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { Loader } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { Register, registerUser } from "@/features/user/post-create-user";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-export default function LoginPage() {
-
+export default function RegisterPage() {
+// debugger;
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
     const formSchema = z.object({
         username: z.string().min(1, {
             message: "Podaj nazwę użytkownika.",
         }),
-        password: z.string().min(1, {
-            message: "Podaj hasło.",
+        email: z.string().email({
+            message: "Podaj poprawny adres email.",
+        }),
+        password: z.string().min(6, {
+            message: "Hasło musi mieć co najmniej 6 znaków.",
         }),
     });
 
@@ -33,6 +35,7 @@ export default function LoginPage() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
+            email: "",
             password: "",
         },
     });
@@ -41,17 +44,22 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await signIn("credentials", {
-                username: values.username,
-                password: values.password,
-                redirect: false
-            });
+            const user = await registerUser(values as Register);
 
-            if (response?.ok) {
-                router.push("/dashboard");
-            } else {
-                console.error("Login failed:", response?.error);
+            if (user) {
+                const response = await signIn("credentials", {
+                    username: values.username,
+                    password: values.password,
+                    redirect: false
+                });
+
+                if (response?.ok) {
+                    router.push("/dashboard");
+                } else {
+                    console.error("Login failed:", response?.error);
+                }
             }
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -79,13 +87,38 @@ export default function LoginPage() {
                     />
                     <FormField
                         control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" placeholder="Email" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="password"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Hasło</FormLabel>
                                 <FormControl>
-                                    <Input type="password"
-                                           placeholder="Hasło" {...field} />
+                                    <Input type="password" placeholder="Hasło" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Potwierdź hasło</FormLabel>
+                                <FormControl>
+                                    <Input type="password" placeholder="Hasło" {...field} />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -97,19 +130,18 @@ export default function LoginPage() {
                             disabled
                         >
                             <Loader className={cn("w-6 h-6 mr-2 animate-spin")}/>
-                            Logowanie...
+                            Rejestracja...
                         </Button>
                     ) : (
                         <Button type="submit"
                                 className={cn("w-full")}
                         >
-                            Zaloguj się
+                            Zarejestruj się
                         </Button>)}
-
                 </form>
             </Form>
             <Button className="w-fit mt-4" variant="secondary">
-                <Link href="/register">Zarejestruj się</Link>
+                <Link href="/login">Zaloguj się</Link>
             </Button>
         </div>
     );

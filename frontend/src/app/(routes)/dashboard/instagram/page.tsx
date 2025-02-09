@@ -19,6 +19,7 @@ import PostsTable from "@/app/(routes)/dashboard/instagram/_components/posts-tab
 import ScheduleContent from "@/app/(routes)/dashboard/instagram/_components/schedule-content";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import ConnectInstagramAccount from "@/app/(routes)/dashboard/instagram/_components/connect-instagram-account";
 
 export default function InstagramPage() {
 
@@ -49,7 +50,7 @@ export default function InstagramPage() {
                     errors.forEach(error => {
                         toast({
                             variant: "destructive",
-                            description: error.message
+                            description: error.errorMessage
                         });
                     });
                 }
@@ -62,7 +63,7 @@ export default function InstagramPage() {
         }
     }, [token]);
 
-    return (
+    return igUserDetail === null ? <ConnectInstagramAccount /> : (
         <main className="w-full h-full flex justify-center items-start space-x-12">
             <div className="w-fit flex flex-col space-y-4">
                 <InstagramProfile user={igUserDetail}

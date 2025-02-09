@@ -11,6 +11,9 @@ import { Carousel } from "@/components/ui/carousel";
 import Image from "next/image";
 import { TikTokVideo } from "@/types/tiktok/response/tiktok-video";
 import { getTiktokPublishedVideos } from "@/features/tiktok/api/get-tiktok-published-videos";
+import { TikTokVideoInfo } from "@/types/tiktok/response/tiktok-video-info";
+import { getTiktokPostsStats } from "@/features/tiktok/api/get-tiktok-posts-stats";
+import TiktokVideoInfoView from "@/app/(routes)/dashboard/tiktok/_components/tiktok-video-info-view";
 
 export default function PublishedPosts() {
 
@@ -23,16 +26,21 @@ export default function PublishedPosts() {
     const [tikTokVideos, setTikTokVideos] = useState<TikTokVideo[]>([]);
     const [isVideosLoading, setIsVideosLoading] = useState(true);
 
+    const [tiktokVideosStats, setTiktokVideosStats] = useState<TikTokVideoInfo[]>([]);
+    const [isVideosStatsLoading, setIsVideosStatsLoading] = useState(true);
+
     useEffect(() => {
         const fetchTikTokPhotos = async () => {
             const { data: photosData, errors: photosErrors } = await getTiktokPublishedPhotos(token);
             const { data: videosData, errors: videosErrors } = await getTiktokPublishedVideos(token);
+            const {data: videosStatsData, errors: videosStatsErrors} = await getTiktokPostsStats(token);
+
 
             if (photosErrors.length > 0) {
                 photosErrors.forEach(error => {
                     toast({
                         variant: "destructive",
-                        description: error.message
+                        description: error.errorMessage
                     });
                 });
             }
@@ -41,7 +49,16 @@ export default function PublishedPosts() {
                 videosErrors.forEach(error => {
                     toast({
                         variant: "destructive",
-                        description: error.message
+                        description: error.errorMessage
+                    });
+                });
+            }
+
+            if (videosStatsErrors.length > 0) {
+                videosStatsErrors.forEach(error => {
+                    toast({
+                        variant: "destructive",
+                        description: error.errorMessage
                     });
                 });
             }
@@ -51,10 +68,17 @@ export default function PublishedPosts() {
 
             setTikTokVideos(videosData ?? []);
             setIsVideosLoading(false);
+
+            setTiktokVideosStats(videosStatsData ?? []);
+            setIsVideosStatsLoading(false);
         }
 
         fetchTikTokPhotos();
     }, [token]);
+
+    const getPostInfo = (title: string) => {
+        return tiktokVideosStats.find(video => video.title === title) || null;
+    }
 
     const photosColumns: ColumnDef<TikTokPhoto>[] = [
         {
@@ -82,6 +106,12 @@ export default function PublishedPosts() {
                 </Carousel>
             ),
         },
+        {
+            header: "Szczegóły",
+            cell: (info) => (
+                <TiktokVideoInfoView isLoading={isVideosStatsLoading} videoInfo={getPostInfo(info.row.original.description) ?? null}/>
+            ),
+        }
     ];
 
     const videoColumns: ColumnDef<TikTokVideo>[] = [
@@ -102,6 +132,12 @@ export default function PublishedPosts() {
                     : null
             ),
         },
+        {
+            header: "Szczegóły",
+            cell: (info) => (
+                <TiktokVideoInfoView isLoading={isVideosStatsLoading} videoInfo={getPostInfo(info.row.original.title) ?? null}/>
+            ),
+        }
     ];
 
 

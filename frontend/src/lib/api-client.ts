@@ -1,5 +1,6 @@
 ﻿import { ApiEndpoint } from "@/configurations/api-paths";
 import { ApiResponse } from "@/types/api/api-response";
+import { ValidationErrorApiResponse } from "@/types/api/error";
 
 type RequestOptions = {
     body?: any;
@@ -24,7 +25,10 @@ export const api = {
         if (!response.ok) {
             // throw new Error(`Failed to fetch ${endpoint.url}`);
             // return await response.json() as ValidationErrorResponse;
-            const errors = await response.json();
+            const errorsResponse = (await response.json()) as ValidationErrorApiResponse;
+            const errors = errorsResponse.errors;
+
+
             return { data: null, errors };
         }
 
