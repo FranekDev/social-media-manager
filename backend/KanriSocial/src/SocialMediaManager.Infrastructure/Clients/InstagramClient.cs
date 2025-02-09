@@ -12,7 +12,6 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient(nameof(InstagramClient));
     private readonly IConfiguration _configuration = configuration;
     
-    // add validation to refresh access token if publish date is more than 60 days
     public async Task<Result<InstagramTokenResponse?>> GetLongLivedToken(string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
@@ -24,7 +23,7 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         };
 
         var uri = BuildUri("oauth/access_token", queryParams);
-        return await GetFromApiWithFailMessage<InstagramTokenResponse>(uri, "Failed to get long-lived token");
+        return await GetFromApiWithFailMessage<InstagramTokenResponse>(uri, "Wystąpił błąd podczas pobierania tokenu");
     }
 
     public async Task<Result<InstagramContainer?>> GetMedia(string instagramUserId, string imageUrl, string? caption, string accessToken)
@@ -40,7 +39,10 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         return await PostToApiWithFailMessage<InstagramContainer>(uri, null, "Failed to get media");
     }
 
-    public async Task<Result<InstagramMedia?>> PublishMedia(string instagramUserId, InstagramContainer container, string accessToken)
+    public async Task<Result<InstagramMedia?>> PublishMedia(
+        string instagramUserId, 
+        InstagramContainer container, 
+        string accessToken)
     {
         var queryParams = new Dictionary<string, string?>
         {
@@ -49,7 +51,7 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         };
 
         var uri = BuildUri($"{instagramUserId}/media_publish", queryParams);
-        return await PostToApiWithFailMessage<InstagramMedia>(uri, null, "Failed to publish media");
+        return await PostToApiWithFailMessage<InstagramMedia>(uri, null, "Wystąpił błąd podczas publikacji");
     }
 
     public async Task<Result<InstagramUserDetail?>> GetUserDetail(string instagramUserId, string accessToken)
@@ -187,5 +189,17 @@ public class InstagramClient(IHttpClientFactory httpClientFactory, IConfiguratio
         
         var uri = BuildUri($"{instagramMediaId}/insights", queryParams);
         return await GetFromApiWithFailMessage<InstagramMediaInsightsData>(uri, "Failed to get post insights");
+    }
+
+    public async Task<Result<InstagramUserDataResponse?>> GetUserData(string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["fields"] = "instagram_business_account{id,name,username,profile_picture_url}",
+            ["access_token"] = accessToken
+        };
+        
+        var uri = BuildUri("me/accounts", queryParams);
+        return await GetFromApiWithFailMessage<InstagramUserDataResponse>(uri, "Failed to get user data");
     }
 }

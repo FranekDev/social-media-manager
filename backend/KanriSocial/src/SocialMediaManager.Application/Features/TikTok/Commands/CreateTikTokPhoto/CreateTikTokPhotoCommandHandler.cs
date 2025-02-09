@@ -37,7 +37,7 @@ public class CreateTikTokPhotoCommandHandler(
             photoUrls.Add(photoUrl);
         }
 
-        var postInfo = new TikTokContentPostInfo(request.Title, request.Descriptiton, false, TikTokPrivaceLevel.SelfOnly, false);
+        var postInfo = new TikTokContentPostInfo(request.Title, request.Description, false, TikTokPrivaceLevel.SelfOnly, false);
         var sourceInfo = new TikTokContentSourceInfo(TikTokPostSource.PullFromUrl, 0, photoUrls);
         
         if (!request.ScheduledAt.IsUtcDateIfNotConvertToUtc(out var scheduledTimeUtc))
@@ -48,7 +48,7 @@ public class CreateTikTokPhotoCommandHandler(
         var photoId = await _photoRepository.Create(new Domain.Models.TikTok.TikTokPhoto
         {
             Title = request.Title,
-            Description = request.Descriptiton,
+            Description = request.Description,
             ScheduledAt = request.ScheduledAt,
             TikTokUserId = tiktokUser.Id,
             PhotoImagesUrls = photoUrls

@@ -129,4 +129,70 @@ public class TikTokClient(IHttpClientFactory clientFactory, IConfiguration confi
         
         return await PostToApiWithFailMessage<Response<TikTokContentPostResponse>>(request, "Failed to post content to TikTok.");
     }
+    
+    public async Task<Result<Response<TikTokVideosInfo>?>> GetVideosStats(string accessToken, IEnumerable<string> videoIds)
+    {
+        List<string> fields = [    
+            "id",
+            "title",
+            "like_count",
+            "comment_count",
+            "share_count",
+            "view_count"];
+        
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["fields"] = string.Join(",", fields),
+        };
+
+        var content = new
+        {
+            filters = new 
+            {
+                video_ids = videoIds
+            }
+        };
+        
+        var uri = BuildUri(TikTokApiEndpoint.VideoQuery, queryParams);
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Content = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json")
+        {
+            CharSet = "UTF-8"
+        };
+        
+        return await PostToApiWithFailMessage<Response<TikTokVideosInfo>>(request, "Nie udało się pobrać statystyk filmów z TikToka.");
+    }
+    
+    public async Task<Result<Response<TikTokVideos>?>> GetVideos(string accessToken, int maxCount = 20)
+    {
+        List<string> fields = [    
+            "id",
+            "title",
+            "cover_image_url"];
+        
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["fields"] = string.Join(",", fields),
+        };
+
+        var content = new
+        {
+            max_count = maxCount
+        };
+        
+        var uri = BuildUri(TikTokApiEndpoint.VideoList, queryParams);
+        
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Content = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json")
+        {
+            CharSet = "UTF-8"
+        };
+     
+        return await PostToApiWithFailMessage<Response<TikTokVideos>>(request, "Nie udało się pobrać filmów z TikToka.");
+    }
 }

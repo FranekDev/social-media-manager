@@ -21,4 +21,10 @@ public class TikTokUserRepository(KanriSocialDbContext context) : ITikTokUserRep
     {
         return _context.TikTokUsers.FirstOrDefaultAsync(x => x.UserId == userId);
     }
+    
+    public async Task Update(TikTokUser user)
+    {
+        _context.TikTokUsers.Update(user);
+        await _context.SaveChangesAsync();
+    }
 }

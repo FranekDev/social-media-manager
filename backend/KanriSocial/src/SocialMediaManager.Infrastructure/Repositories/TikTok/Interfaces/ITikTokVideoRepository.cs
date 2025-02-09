@@ -1,5 +1,6 @@
 ﻿using SocialMediaManager.Domain.Models.TikTok;
 using SocialMediaManager.Shared.Dtos.TikTok;
+using TikTokVideo = SocialMediaManager.Domain.Models.TikTok.TikTokVideo;
 
 namespace SocialMediaManager.Infrastructure.Repositories.TikTok.Interfaces;
 

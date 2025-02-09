@@ -6,28 +6,34 @@ using SocialMediaManager.Shared.Dtos.Instagram;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SocialMediaManager.Infrastructure.Clients.Interfaces;
 
 namespace SocialMediaManager.Api.Controllers.Instagram;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class InstagramUserController(ISender sender) : ControllerBase
+public class InstagramUserController(ISender sender, IInstagramClient instagramClient) : ControllerBase
 {
     private readonly ISender _sender = sender;
+    private readonly IInstagramClient _instagramClient = instagramClient;
 
     [HttpPost]
-    public async Task<IActionResult> CreateInstagramUser([FromBody] CreateInstagramUserCommand command)
+    public async Task<IActionResult> CreateInstagramUser([FromBody] CreateInstagramUserRequest request)
     {
-        try
+        var userId = GetUserId();
+        if (userId is null)
         {
-            var result = await _sender.Send(command);
-            return Ok(new { UserId = result });
+            return BadRequest("Błędne id użytkownika");
         }
-        catch (Exception ex)
+        
+        var result = await _sender.Send(new CreateInstagramUserCommand(userId.Value, request.Token));
+        if (result is null)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
+            return BadRequest("Błąd podczas tworzenia użytkownika");
         }
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -47,6 +53,18 @@ public class InstagramUserController(ISender sender) : ControllerBase
         }
         
         return Ok(result.Value);
+    }
+
+    [HttpPost("user-id")]
+    public async Task<ActionResult<Result<InstagramUserDataResponse>>> GetIgUserId([FromBody] string token)
+    {
+        var userDAta = await _instagramClient.GetUserData(token);
+        if (userDAta.IsFailed)
+        {
+            return BadRequest(userDAta.Errors);
+        }
+        
+        return Ok(userDAta.Value);
     }
     
     private Guid? GetUserId()

@@ -6,19 +6,27 @@ public class CreateTikTokPhotoCommandValidator : AbstractValidator<CreateTikTokP
 {
     public CreateTikTokPhotoCommandValidator()
     {
-        RuleFor(p => p.Title)
-            .NotEmpty().WithMessage("{PropertyName} is required.")
-            .MaximumLength(90).WithMessage("{PropertyName} must not exceed 50 characters.");
+        var polishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
 
-        RuleFor(p => p.Descriptiton)
-            .NotEmpty().WithMessage("{PropertyName} is required.")
-            .MaximumLength(4000).WithMessage("{PropertyName} must not exceed 500 characters.");
+        RuleFor(p => p.Title)
+        .NotEmpty().WithMessage("Tytuł jest wymagany.")
+        .MaximumLength(90).WithMessage("Tytuł nie może przekraczać 90 znaków.");
+
+        RuleFor(p => p.Description)
+        .NotEmpty().WithMessage("Opis jest wymagany.")
+        .MaximumLength(4000).WithMessage("Opis nie może przekraczać 4000 znaków.");
 
         RuleFor(p => p.ImagesBytes)
-            .NotEmpty().WithMessage("{PropertyName} is required.");
+        .NotEmpty().WithMessage("Zdjęcia są wymagane.")
+        .Must(images => images is { Count: > 0 })
+        .WithMessage("Zdjęcia muszą zawierać co najmniej jeden element.");
 
         RuleFor(p => p.ScheduledAt)
-            .NotEmpty().WithMessage("{PropertyName} is required.")
-            .GreaterThan(DateTime.UtcNow).WithMessage("{PropertyName} must be greater than {ComparisonValue}.");
+        .NotEmpty().WithMessage("Data zaplanowania jest wymagana.")
+        .GreaterThan(DateTime.UtcNow).WithMessage(p =>
+        {
+            var comparisonValueInPolishTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, polishTimeZone);
+            return $"Data zaplanowania musi być większa niż {comparisonValueInPolishTime}.";
+        });
     }
 }

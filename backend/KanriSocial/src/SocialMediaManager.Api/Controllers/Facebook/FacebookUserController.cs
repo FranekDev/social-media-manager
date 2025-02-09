@@ -31,7 +31,7 @@ public class FacebookUserController(ISender sender) : ControllerBase
             return BadRequest("Invalid user id");
         }
         
-        var response = await _sender.Send(new CreateFacebookUserCommand(request.FacebookUserId, request.Token, userId.Value));
+        var response = await _sender.Send(new CreateFacebookUserCommand(request.Token, userId.Value));
         
         if (response.IsFailed)
         {

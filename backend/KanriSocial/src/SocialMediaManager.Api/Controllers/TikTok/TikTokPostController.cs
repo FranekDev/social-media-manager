@@ -9,6 +9,7 @@ using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokPublishedP
 using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokPublishedVideos;
 using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledPhotos;
 using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokScheduledVideos;
+using SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokVideosStats;
 using SocialMediaManager.Shared.Dtos.TikTok;
 
 namespace SocialMediaManager.Api.Controllers.TikTok;
@@ -42,7 +43,7 @@ public class TikTokPostController(ISender sender) : ControllerBase
             return BadRequest("Invalid user id");
         }
 
-        var result = await _sender.Send(new CreateTikTokPhotoCommand(request.Title, request.Descriptiton, request.ImagesBytes, request.ScheduledAt, userId.Value));
+        var result = await _sender.Send(new CreateTikTokPhotoCommand(request.Title, request.Description, request.ImagesBytes, request.ScheduledAt, userId.Value));
         return Ok(new { PhotoId = result.Value});
     }
     
@@ -110,6 +111,24 @@ public class TikTokPostController(ISender sender) : ControllerBase
         }
 
         var result = await _sender.Send(new GetTikTokPublishedVideosQuery(userId.Value));
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(result.Value);
+    }
+    
+    [HttpGet("videos/stats")]
+    public async Task<ActionResult<Result<IEnumerable<TikTokVideoInfo>>>> GetVideosStats()
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return BadRequest("Invalid user id");
+        }
+
+        var result = await _sender.Send(new GetTikTokVideosStatsQuery(userId.Value));
         if (!result.IsSuccess)
         {
             return BadRequest(result.Errors);

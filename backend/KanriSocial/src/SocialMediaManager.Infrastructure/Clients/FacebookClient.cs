@@ -112,4 +112,16 @@ public class FacebookClient(IHttpClientFactory httpClientFactory, IConfiguration
         
         return await PostToApiWithFailMessage<FacebookNewComment>(uri, content, "Nie udało się dodać komentarza do posta.");
     }
+
+    public async Task<Result<FacebookAccountId?>> GetAccountId(string accessToken)
+    {
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["fields"] = "id",
+            ["access_token"] = accessToken
+        };
+
+        var uri = BuildUri("me", queryParams);
+        return await GetFromApiWithFailMessage<FacebookAccountId>(uri, "Nie udało się pobrać ID konta.");
+    }
 }

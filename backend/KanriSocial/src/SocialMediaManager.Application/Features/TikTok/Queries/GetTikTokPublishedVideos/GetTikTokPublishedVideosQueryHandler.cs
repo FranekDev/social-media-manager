@@ -3,6 +3,7 @@ using MediatR;
 using SocialMediaManager.Domain.Models.TikTok;
 using SocialMediaManager.Infrastructure.Repositories.TikTok.Interfaces;
 using SocialMediaManager.Shared.Dtos.TikTok;
+using TikTokVideo = SocialMediaManager.Domain.Models.TikTok.TikTokVideo;
 
 namespace SocialMediaManager.Application.Features.TikTok.Queries.GetTikTokPublishedVideos;
 
@@ -20,6 +21,7 @@ public class GetTikTokPublishedVideosQueryHandler(ITikTokVideoRepository tikTokV
      => new()
      {
         Id = video.Id,
+        TikTokId = video.PublishId?.Split(".").Last() ?? "",
         Title = video.Title,
         VideoUrl = video.VideoUrl,
         ScheduledAt = video.ScheduledAt

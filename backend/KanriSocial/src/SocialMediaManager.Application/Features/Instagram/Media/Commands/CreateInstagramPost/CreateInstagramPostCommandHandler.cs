@@ -19,8 +19,15 @@ public class CreateInstagramPostCommandHandler(
     public async Task<Result<Guid>> Handle(CreateInstagramPostCommand request, CancellationToken cancellationToken)
     {
         var stream = new MemoryStream(Convert.FromBase64String(request.ImageBytes));
-        var imageUrl = await _contentStorageService.UploadInstagramPostAndGetUrl(stream, $"{request.UserId}/{request.ScheduledAt.ToString()}.jpg");
-        var post = new InstagramPostDto(Guid.NewGuid(), imageUrl, request.Caption, request.ScheduledAt, request.UserId, false);
+        var imageUrl = await _contentStorageService.UploadInstagramPostAndGetUrl(
+            stream, $"{request.UserId}/{request.ScheduledAt.ToString()}.jpg");
+        var post = new InstagramPostDto(
+            Guid.NewGuid(), 
+            imageUrl, 
+            request.Caption, 
+            request.ScheduledAt, 
+            request.UserId, 
+            false);
         var instagramUser = await _instagramUserRepository.GetByUserId(post.UserId);
         
         return await _instagramMediaService.SchedulePost(post, instagramUser);

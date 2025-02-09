@@ -20,6 +20,7 @@ public class GetTikTokPublishedPhotosQueryHandler(ITikTokPhotoRepository tikTokP
      => new()
      {
         Id = photo.Id,
+        TikTokId = photo.PublishId?.Split(".").Last() ?? "",
         Title = photo.Title,
         Description = photo.Description,
         PhotoUrls = photo.PhotoImagesUrls,

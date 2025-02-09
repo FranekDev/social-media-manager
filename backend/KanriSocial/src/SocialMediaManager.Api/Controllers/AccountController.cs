@@ -55,7 +55,8 @@ public class AccountController(
             }
             else
             {
-                token = existingToken.Token;
+                // token = existingToken.Token;
+                token = await _tokenService.CreateToken(user);
             }
             
             // var token = await _tokenService.CreateToken(user);

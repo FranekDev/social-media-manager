@@ -92,4 +92,5 @@ public interface IInstagramClient
     /// <param name="insightType">Type of Instagram media insight (post or reel)</param>
     /// <returns>The task result contains the Instagram media insights data</returns>
     Task<Result<InstagramMediaInsightsData?>> GetMediaInsights(string instagramMediaId, string accessToken, InstagramMediaInsightType insightType);
+    Task<Result<InstagramUserDataResponse?>> GetUserData(string accessToken);
 }

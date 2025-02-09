@@ -115,7 +115,10 @@ public class InstagramMediaController(ISender sender) : ControllerBase
             return BadRequest("Invalid user id");
         }
         
-        var result = await _sender.Send(new GetInstagramMediaInsightQuery(request.MediaId, request.InsightType, userIdGuid));
+        var result = await _sender.Send(new GetInstagramMediaInsightQuery(
+            request.MediaId, 
+            request.InsightType, userIdGuid)
+        );
         if (result.IsFailed)
         {
             return BadRequest(result.Errors);

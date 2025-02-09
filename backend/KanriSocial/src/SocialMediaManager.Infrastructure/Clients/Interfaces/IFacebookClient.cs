@@ -48,4 +48,6 @@ public interface IFacebookClient
 
     Task<Result<FacebookData<FacebookPagePicture>?>> GetPagePicture(string pageId, string accessToken);
     Task<Result<FacebookNewComment?>> CreatePagePostComment(string pagePostId, string message, string accessToken);
+    // Task<Result<FacebookData<>?>> GetPagePostInsights(string pagePostId, string accessToken);
+    Task<Result<FacebookAccountId?>> GetAccountId(string accessToken);
 }
